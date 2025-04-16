@@ -1,12 +1,13 @@
+import { IdGenerator } from "../../Utils/id-generator";
 import { IComponent } from "../interfaces/component.interface";
-import { Component } from "./component.object";
 
-export class Group extends Component {
+export class Group implements IComponent {
+  private _id: number;
   private children: IComponent[];
 
-  constructor() {
-    super({ posX: 0, posY: 0, width: 10, height: 10 });
-    this.children = [];
+  constructor({ components }: { components?: IComponent[] }) {
+    this._id = IdGenerator.getInstance().generateId();
+    this.children = components !== undefined ? components : [];
   }
 
   public add({ component }: { component: IComponent }): void {
@@ -22,14 +23,68 @@ export class Group extends Component {
   }
 
   public draw(): void {
-    console.log("Group");
+    for (const child of this.children) {
+      child.draw();
+    }
   }
 
-  public move({ x, y }: { x: number; y: number }): void {
-    console.log("Group move");
+  public move({ dx, dy }: { dx: number; dy: number }): void {
+    for (const child of this.children) {
+      child.move({ dx, dy });
+    }
   }
 
-  public scale({ x, y }: { x: number; y: number }): void {
-    console.log("Group scale");
+  public scale({ width, height }: { width: number; height: number }): void {
+    if (this.children.length === 0) return;
+
+    const scaleX = width / this.width;
+    const scaleY = height / this.height;
+
+    const groupX = this.posX;
+    const groupY = this.posY;
+
+    // Group의 position을 기준으로 scaling
+    for (const child of this.children) {
+      const relX = child.posX - groupX;
+      const relY = child.posY - groupY;
+
+      child.scale({
+        width: child.width * scaleX,
+        height: child.height * scaleY,
+      });
+
+      child.move({
+        dx: groupX + relX * scaleX - child.posX,
+        dy: groupY + relY * scaleY - child.posY,
+      });
+    }
+  }
+
+  get id(): number {
+    return this._id;
+  }
+
+  get posX(): number {
+    if (this.children.length === 0) return 0;
+    return Math.min(...this.children.map((child) => child.posX));
+  }
+
+  get posY(): number {
+    if (this.children.length === 0) return 0;
+    return Math.min(...this.children.map((child) => child.posY));
+  }
+
+  get width(): number {
+    if (this.children.length === 0) return 0;
+    const minX = Math.min(...this.children.map((child) => child.posX));
+    const maxX = Math.max(...this.children.map((child) => child.posX + child.width));
+    return maxX - minX;
+  }
+
+  get height(): number {
+    if (this.children.length === 0) return 0;
+    const minY = Math.min(...this.children.map((child) => child.posY));
+    const maxY = Math.max(...this.children.map((child) => child.posY + child.height));
+    return maxY - minY;
   }
 }

@@ -2,33 +2,49 @@ import { IdGenerator } from "../../Utils/id-generator";
 import { IComponent } from "../interfaces/component.interface";
 
 export abstract class Component implements IComponent {
-  private id: number;
-  private posX: number;
-  private posY: number;
-  private width: number;
-  private height: number;
+  private _id: number;
+  private _posX: number;
+  private _posY: number;
+  private _width: number;
+  private _height: number;
 
-  constructor({
-    posX,
-    posY,
-    width,
-    height,
-  }: {
-    posX: number;
-    posY: number;
-    width: number;
-    height: number;
-  }) {
-    this.id = IdGenerator.getInstance().generateId();
-    this.posX = posX;
-    this.posY = posY;
-    this.width = width;
-    this.height = height;
+  constructor({ posX, posY, width, height }: { posX: number; posY: number; width: number; height: number }) {
+    this._id = IdGenerator.getInstance().generateId();
+    this._posX = posX;
+    this._posY = posY;
+    this._width = width;
+    this._height = height;
   }
 
   abstract draw(): void;
 
-  abstract move({ x, y }: { x: number; y: number }): void;
+  move({ dx, dy }: { dx: number; dy: number }): void {
+    this._posX += dx;
+    this._posY += dy;
+  }
 
-  abstract scale({ x, y }: { x: number; y: number }): void;
+  scale({ width, height }: { width: number; height: number }): void {
+    this._width = width;
+    this._height = height;
+  }
+
+  get id(): number {
+    return this._id;
+  }
+
+  get posX(): number {
+    return this._posX;
+  }
+
+  get posY(): number {
+    return this._posY;
+  }
+
+  get width(): number {
+    return this._width;
+  }
+
+  get height(): number {
+    return this._height;
+  }
 }
