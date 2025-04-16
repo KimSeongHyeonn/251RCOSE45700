@@ -8,7 +8,7 @@ export abstract class Component implements IComponent {
   private _width: number;
   private _height: number;
 
-  constructor({ posX, posY, width, height }: { posX: number; posY: number; width: number; height: number }) {
+  constructor({ posX = 0, posY = 0, width = 10, height = 10 }: { posX?: number; posY?: number; width?: number; height?: number }) {
     this._id = IdGenerator.getInstance().generateId();
     this._posX = posX;
     this._posY = posY;

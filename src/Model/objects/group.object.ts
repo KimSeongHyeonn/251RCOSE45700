@@ -5,9 +5,9 @@ export class Group implements IComponent {
   private _id: number;
   private children: IComponent[];
 
-  constructor({ components }: { components?: IComponent[] }) {
+  constructor({ components = [] }: { components?: IComponent[] }) {
     this._id = IdGenerator.getInstance().generateId();
-    this.children = components !== undefined ? components : [];
+    this.children = components;
   }
 
   public add({ component }: { component: IComponent }): void {
