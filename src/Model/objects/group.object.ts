@@ -60,28 +60,28 @@ export class Group implements IComponent {
     }
   }
 
-  get id(): number {
+  public get id(): number {
     return this._id;
   }
 
-  get posX(): number {
+  public get posX(): number {
     if (this.children.length === 0) return 0;
     return Math.min(...this.children.map((child) => child.posX));
   }
 
-  get posY(): number {
+  public get posY(): number {
     if (this.children.length === 0) return 0;
     return Math.min(...this.children.map((child) => child.posY));
   }
 
-  get width(): number {
+  public get width(): number {
     if (this.children.length === 0) return 0;
     const minX = Math.min(...this.children.map((child) => child.posX));
     const maxX = Math.max(...this.children.map((child) => child.posX + child.width));
     return maxX - minX;
   }
 
-  get height(): number {
+  public get height(): number {
     if (this.children.length === 0) return 0;
     const minY = Math.min(...this.children.map((child) => child.posY));
     const maxY = Math.max(...this.children.map((child) => child.posY + child.height));

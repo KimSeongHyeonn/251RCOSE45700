@@ -16,35 +16,35 @@ export abstract class Component implements IComponent {
     this._height = height;
   }
 
-  abstract draw(): void;
+  public abstract draw(): void;
 
-  move({ dx, dy }: { dx: number; dy: number }): void {
+  public move({ dx, dy }: { dx: number; dy: number }): void {
     this._posX += dx;
     this._posY += dy;
   }
 
-  scale({ width, height }: { width: number; height: number }): void {
+  public scale({ width, height }: { width: number; height: number }): void {
     this._width = width;
     this._height = height;
   }
 
-  get id(): number {
+  public get id(): number {
     return this._id;
   }
 
-  get posX(): number {
+  public get posX(): number {
     return this._posX;
   }
 
-  get posY(): number {
+  public get posY(): number {
     return this._posY;
   }
 
-  get width(): number {
+  public get width(): number {
     return this._width;
   }
 
-  get height(): number {
+  public get height(): number {
     return this._height;
   }
 }
