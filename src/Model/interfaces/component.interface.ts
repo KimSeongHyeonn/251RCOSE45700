@@ -1,5 +1,7 @@
+import { DrawableShape } from "./drawable-shape.interface";
+
 export interface IComponent {
-  draw(): void;
+  toDrawable(): DrawableShape[]; // 항상 배열로 반환(Group 고려);
 
   move({ dx, dy }: { dx: number; dy: number }): void;
 

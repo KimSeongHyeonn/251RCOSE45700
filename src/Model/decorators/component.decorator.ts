@@ -1,4 +1,5 @@
 import { IComponent } from "../interfaces/component.interface";
+import { DrawableShape } from "../interfaces/drawable-shape.interface";
 
 export abstract class ComponentDecorator implements IComponent {
   protected component: IComponent;
@@ -7,7 +8,7 @@ export abstract class ComponentDecorator implements IComponent {
     this.component = component;
   }
 
-  public abstract draw(): void;
+  public abstract toDrawable(): DrawableShape[];
 
   public move({ dx, dy }: { dx: number; dy: number }): void {
     this.component.move({ dx, dy });

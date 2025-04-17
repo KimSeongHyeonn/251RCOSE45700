@@ -1,5 +1,6 @@
 import { IdGenerator } from "../../Utils/id-generator";
 import { IComponent } from "../interfaces/component.interface";
+import { DrawableShape } from "../interfaces/drawable-shape.interface";
 
 export class Group implements IComponent {
   private _id: number;
@@ -22,10 +23,8 @@ export class Group implements IComponent {
     return this.children;
   }
 
-  public draw(): void {
-    for (const child of this.children) {
-      child.draw();
-    }
+  public toDrawable(): DrawableShape[] {
+    return this.children.map((child) => child.toDrawable()).flat();
   }
 
   public move({ dx, dy }: { dx: number; dy: number }): void {

@@ -1,4 +1,5 @@
 import { IComponent } from "../interfaces/component.interface";
+import { DrawableShape } from "../interfaces/drawable-shape.interface";
 import { ComponentDecorator } from "./component.decorator";
 
 export class SelectedComponentDecorator extends ComponentDecorator {
@@ -10,17 +11,13 @@ export class SelectedComponentDecorator extends ComponentDecorator {
     this.updateHandlePositions();
   }
 
-  public draw(): void {
+  public toDrawable(): DrawableShape[] {
     this.updateHandlePositions();
-    this.component.draw();
-    console.log("Selected Component");
-    this.drawResizeHandlers();
+    return [...this.component.toDrawable(), ...this.toDrawableResizeHandlers()];
   }
 
-  private drawResizeHandlers(): void {
-    this.handles.forEach((handle) => {
-      handle.draw();
-    });
+  private toDrawableResizeHandlers(): DrawableShape[] {
+    return this.handles.map((handle) => handle.toDrawable()).flat();
   }
 
   private updateHandlePositions(): void {
@@ -114,8 +111,16 @@ export class Handle {
     return mouseX >= this.x - halfSize && mouseX <= this.x + halfSize && mouseY >= this.y - halfSize && mouseY <= this.y + halfSize;
   }
 
-  public draw(): void {
-    console.log(`Handle ${HandlePosition[this.position]} at (${this.x}, ${this.y}) with size ${this.size}`);
+  public toDrawable(): DrawableShape[] {
+    return [
+      {
+        type: "rectangle",
+        x: this.x - this.size / 2,
+        y: this.y - this.size / 2,
+        width: this.size,
+        height: this.size,
+      },
+    ];
   }
 }
 
