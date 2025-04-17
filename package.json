@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "dev": "tsc --watch"
+    "build": "tsc && vite build",
+    "dev": "vite",
+    "preview": "vite preview"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,9 @@
   },
   "homepage": "https://github.com/wjddnjs7895/251RCOSE45700#readme",
   "devDependencies": {
-    "typescript": "^5.8.3"
-  }
+    "@vitejs/plugin-legacy": "^6.1.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.1"
+  },
+  "type": "module"
 }
