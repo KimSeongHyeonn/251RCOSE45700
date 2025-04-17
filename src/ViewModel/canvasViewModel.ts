@@ -1,9 +1,9 @@
-import { IComponent } from "../Model/interfaces/component.interface";
-import { Ellipse } from "../Model/objects/ellipse.object";
-import { Group } from "../Model/objects/group.object";
-import { Line } from "../Model/objects/line.object";
-import { Rectangle } from "../Model/objects/rectangle.object";
-import { Canvas } from "../View/canvas";
+import { IComponent } from "~/Model/interfaces/component.interface";
+import { Ellipse } from "~/Model/objects/ellipse.object";
+import { Group } from "~/Model/objects/group.object";
+import { Line } from "~/Model/objects/line.object";
+import { Rectangle } from "~/Model/objects/rectangle.object";
+import { Canvas } from "~/View/canvas";
 
 export enum ToolType {
   SELECT,

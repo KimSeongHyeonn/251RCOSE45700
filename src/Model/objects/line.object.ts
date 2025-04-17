@@ -1,12 +1,12 @@
-import { DrawableLine } from "../interfaces/drawable-shape.interface";
-import { Component } from "./component.object";
+import { DrawableLine } from "~/Model/interfaces/drawable-shape.interface";
+import { Component } from "~/Model/objects/component.object";
 
 export class Line extends Component {
   constructor({ posX, posY, width, height }: { posX?: number; posY?: number; width?: number; height?: number }) {
     super({ posX, posY, width, height });
   }
 
-  toDrawable(): DrawableLine[] {
+  public toDrawable(): DrawableLine[] {
     return [
       {
         type: "line",

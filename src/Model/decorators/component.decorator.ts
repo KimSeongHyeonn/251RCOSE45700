@@ -1,5 +1,5 @@
-import { IComponent } from "../interfaces/component.interface";
-import { DrawableShape } from "../interfaces/drawable-shape.interface";
+import { IComponent } from "~/Model/interfaces/component.interface";
+import { DrawableShape } from "~/Model/interfaces/drawable-shape.interface";
 
 export abstract class ComponentDecorator implements IComponent {
   protected component: IComponent;

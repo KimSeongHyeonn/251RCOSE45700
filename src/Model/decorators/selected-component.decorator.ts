@@ -1,6 +1,6 @@
-import { IComponent } from "../interfaces/component.interface";
-import { DrawableShape } from "../interfaces/drawable-shape.interface";
-import { ComponentDecorator } from "./component.decorator";
+import { ComponentDecorator } from "~/Model/decorators/component.decorator";
+import { IComponent } from "~/Model/interfaces/component.interface";
+import { DrawableShape } from "~/Model/interfaces/drawable-shape.interface";
 
 export class SelectedComponentDecorator extends ComponentDecorator {
   private readonly HANDLE_SIZE: number = 6;

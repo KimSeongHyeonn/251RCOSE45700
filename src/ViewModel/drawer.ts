@@ -1,8 +1,8 @@
-import { DrawableShape, ShapeType } from "../Model/interfaces/drawable-shape.interface";
-import { DrawStrategy } from "./drawStrategies/draw.strategy";
-import { EllipseDrawStrategy } from "./drawStrategies/ellipse-draw.strategy";
-import { LineDrawStrategy } from "./drawStrategies/line-draw.strategy";
-import { RectangleDrawStrategy } from "./drawStrategies/rectangle-draw.strategy";
+import { DrawableShape, ShapeType } from "~/Model/interfaces/drawable-shape.interface";
+import { DrawStrategy } from "~/ViewModel/drawStrategies/draw.strategy";
+import { EllipseDrawStrategy } from "~/ViewModel/drawStrategies/ellipse-draw.strategy";
+import { LineDrawStrategy } from "~/ViewModel/drawStrategies/line-draw.strategy";
+import { RectangleDrawStrategy } from "~/ViewModel/drawStrategies/rectangle-draw.strategy";
 
 export class Drawer {
   private ctx: CanvasRenderingContext2D;

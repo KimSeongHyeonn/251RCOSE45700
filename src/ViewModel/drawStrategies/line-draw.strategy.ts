@@ -1,5 +1,5 @@
-import { DrawableLine } from "../../Model/interfaces/drawable-shape.interface";
-import { DrawStrategy } from "./draw.strategy";
+import { DrawableLine } from "~/Model/interfaces/drawable-shape.interface";
+import { DrawStrategy } from "~/ViewModel/drawStrategies/draw.strategy";
 
 export class LineDrawStrategy implements DrawStrategy<DrawableLine> {
   draw(ctx: CanvasRenderingContext2D, shape: DrawableLine) {

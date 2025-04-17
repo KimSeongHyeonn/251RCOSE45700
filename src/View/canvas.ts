@@ -1,6 +1,6 @@
-import { IComponent } from "../Model/interfaces/component.interface";
-import { CanvasViewModel } from "../ViewModel/canvasViewModel";
-import { Drawer } from "../ViewModel/drawer";
+import { IComponent } from "~/Model/interfaces/component.interface";
+import { CanvasViewModel } from "~/ViewModel/canvasViewModel";
+import { Drawer } from "~/ViewModel/drawer";
 
 export class Canvas {
   private canvas: HTMLCanvasElement;

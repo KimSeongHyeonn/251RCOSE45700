@@ -1,6 +1,6 @@
-import { IdGenerator } from "../../Utils/id-generator";
-import { IComponent } from "../interfaces/component.interface";
-import { DrawableShape } from "../interfaces/drawable-shape.interface";
+import { IComponent } from "~/Model/interfaces/component.interface";
+import { DrawableShape } from "~/Model/interfaces/drawable-shape.interface";
+import { IdGenerator } from "~/Utils/id-generator";
 
 export class Group implements IComponent {
   private _id: number;

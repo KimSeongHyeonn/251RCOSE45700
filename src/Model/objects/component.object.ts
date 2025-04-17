@@ -1,6 +1,6 @@
-import { IdGenerator } from "../../Utils/id-generator";
-import { IComponent } from "../interfaces/component.interface";
-import { DrawableShape } from "../interfaces/drawable-shape.interface";
+import { IComponent } from "~/Model/interfaces/component.interface";
+import { DrawableShape } from "~/Model/interfaces/drawable-shape.interface";
+import { IdGenerator } from "~/Utils/id-generator";
 
 export abstract class Component implements IComponent {
   private _id: number;
@@ -14,7 +14,7 @@ export abstract class Component implements IComponent {
 
   private readonly DefaultFillStyles = ["#DDEEFF", "#DFFFE0", "#FFE5D9", "#EBDFFC"];
 
-  constructor({ posX = 0, posY = 0, width = 10, height = 10 }: { posX?: number; posY?: number; width?: number; height?: number }) {
+  constructor({ posX = 0, posY = 0, width = 100, height = 100 }: { posX?: number; posY?: number; width?: number; height?: number }) {
     this._id = IdGenerator.getInstance().generateId();
     this._posX = posX;
     this._posY = posY;
