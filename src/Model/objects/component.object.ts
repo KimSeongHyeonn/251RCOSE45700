@@ -1,34 +1,71 @@
 import { IdGenerator } from "../../Utils/id-generator";
 import { IComponent } from "../interfaces/component.interface";
+import { DrawableShape } from "../interfaces/drawable-shape.interface";
 
 export abstract class Component implements IComponent {
-  private id: number;
-  private posX: number;
-  private posY: number;
-  private width: number;
-  private height: number;
+  private _id: number;
+  private _posX: number;
+  private _posY: number;
+  private _width: number;
+  private _height: number;
+  private _fillStyle: string;
+  private _strokeStyle: string;
+  private _lineWidth: number;
 
-  constructor({
-    posX,
-    posY,
-    width,
-    height,
-  }: {
-    posX: number;
-    posY: number;
-    width: number;
-    height: number;
-  }) {
-    this.id = IdGenerator.getInstance().generateId();
-    this.posX = posX;
-    this.posY = posY;
-    this.width = width;
-    this.height = height;
+  private readonly DefaultFillStyles = ["#DDEEFF", "#DFFFE0", "#FFE5D9", "#EBDFFC"];
+
+  constructor({ posX = 0, posY = 0, width = 10, height = 10 }: { posX?: number; posY?: number; width?: number; height?: number }) {
+    this._id = IdGenerator.getInstance().generateId();
+    this._posX = posX;
+    this._posY = posY;
+    this._width = width;
+    this._height = height;
+    this._fillStyle = this.DefaultFillStyles[Math.floor(Math.random() * this.DefaultFillStyles.length)]; // 기본 채우기 색상: 랜덤
+    this._strokeStyle = "#000000"; // 기본 선 색상: 검정색
+    this._lineWidth = 1;
   }
 
-  abstract draw(): void;
+  public abstract toDrawable(): DrawableShape[];
 
-  abstract move({ x, y }: { x: number; y: number }): void;
+  public move({ dx, dy }: { dx: number; dy: number }): void {
+    this._posX += dx;
+    this._posY += dy;
+  }
 
-  abstract scale({ x, y }: { x: number; y: number }): void;
+  public scale({ width, height }: { width: number; height: number }): void {
+    this._width = width;
+    this._height = height;
+  }
+
+  public get id(): number {
+    return this._id;
+  }
+
+  public get posX(): number {
+    return this._posX;
+  }
+
+  public get posY(): number {
+    return this._posY;
+  }
+
+  public get width(): number {
+    return this._width;
+  }
+
+  public get height(): number {
+    return this._height;
+  }
+
+  public get fillStyle(): string {
+    return this._fillStyle;
+  }
+
+  public get strokeStyle(): string {
+    return this._strokeStyle;
+  }
+
+  public get lineWidth(): number {
+    return this._lineWidth;
+  }
 }
