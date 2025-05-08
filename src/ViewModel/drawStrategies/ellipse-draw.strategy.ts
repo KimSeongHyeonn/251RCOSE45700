@@ -1,5 +1,5 @@
-import { DrawableEllipse } from "../../Model/interfaces/drawable-shape.interface";
-import { DrawStrategy } from "./draw.strategy";
+import { DrawableEllipse } from "~/Model/interfaces/drawable-shape.interface";
+import { DrawStrategy } from "~/ViewModel/drawStrategies/draw.strategy";
 
 export class EllipseDrawStrategy implements DrawStrategy<DrawableEllipse> {
   draw(ctx: CanvasRenderingContext2D, shape: DrawableEllipse) {

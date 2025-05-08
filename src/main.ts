@@ -1,5 +1,5 @@
-import { Canvas } from "./View/canvas";
-import { CanvasViewModel } from "./ViewModel/canvasViewModel";
+import { Canvas } from "~/View/canvas";
+import { CanvasViewModel } from "~/ViewModel/canvasViewModel";
 
 function initializeApp() {
   const container = document.getElementById("canvas-container")!;

@@ -1,5 +1,5 @@
-import { DrawableRectangle } from "../../Model/interfaces/drawable-shape.interface";
-import { DrawStrategy } from "./draw.strategy";
+import { DrawableRectangle } from "~/Model/interfaces/drawable-shape.interface";
+import { DrawStrategy } from "~/ViewModel/drawStrategies/draw.strategy";
 
 export class RectangleDrawStrategy implements DrawStrategy<DrawableRectangle> {
   draw(ctx: CanvasRenderingContext2D, shape: DrawableRectangle) {

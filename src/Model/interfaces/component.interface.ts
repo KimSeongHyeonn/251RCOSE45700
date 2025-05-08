@@ -1,4 +1,4 @@
-import { DrawableShape } from "./drawable-shape.interface";
+import { DrawableShape } from "~/Model/interfaces/drawable-shape.interface";
 
 export interface IComponent {
   toDrawable(): DrawableShape[]; // 항상 배열로 반환(Group 고려);
