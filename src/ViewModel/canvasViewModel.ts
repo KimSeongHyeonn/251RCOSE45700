@@ -1,3 +1,4 @@
+import { SelectedComponentDecorator } from "~/Model/decorators/selected-component.decorator";
 import { IComponent } from "~/Model/interfaces/component.interface";
 import { Ellipse } from "~/Model/objects/ellipse.object";
 import { Group } from "~/Model/objects/group.object";
@@ -49,6 +50,17 @@ export class CanvasViewModel {
         break;
       case "ellipse":
         component = new Ellipse({ posX: x, posY: y }); // Ellipse 클래스 사용
+        break;
+      case "selected":
+        component = new SelectedComponentDecorator(
+          new Group({
+            components: [
+              new Rectangle({ posX: x, posY: y, width: 100, height: 100 }),
+              new Line({ posX: x + 90, posY: y + 50, width: 100, height: 100 }),
+              new Ellipse({ posX: x + 25, posY: y - 25, width: 50, height: 50 }),
+            ],
+          }),
+        ); // 선택된 타원 생성
         break;
       default:
         return;

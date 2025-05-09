@@ -43,10 +43,7 @@ function initializeApp() {
   // 각 View 생성
   const toolbarView = new ToolbarView(toolbarContainer, toolbarViewModel);
   const canvasView = new CanvasView(canvasContainer, 800, 600, canvasViewModel);
-  const propertiesView = new PropertiesPanelView(
-    propertiesContainer,
-    propertiesPanelViewModel
-  );
+  const propertiesView = new PropertiesPanelView(propertiesContainer, propertiesPanelViewModel);
 
   // ViewModel 간 연결
 
