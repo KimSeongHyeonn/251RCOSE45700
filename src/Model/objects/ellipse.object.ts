@@ -17,6 +17,7 @@ export class Ellipse extends Component {
         fillStyle: this.fillStyle,
         strokeStyle: this.strokeStyle,
         lineWidth: this.lineWidth,
+        lineDash: this.lineDash,
       },
     ];
   }
