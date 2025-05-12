@@ -1,7 +1,9 @@
-import { IComponent } from "../Model/interfaces/component.interface";
-import { Group } from "../Model/objects/group.object";
-import Line from "../Model/objects/line.object";
-import { Canvas } from "../View/canvas";
+import { IComponent } from "~/Model/interfaces/component.interface";
+import { Ellipse } from "~/Model/objects/ellipse.object";
+import { Group } from "~/Model/objects/group.object";
+import { Line } from "~/Model/objects/line.object";
+import { Rectangle } from "~/Model/objects/rectangle.object";
+import { Canvas } from "~/View/canvas";
 
 export enum ToolType {
   SELECT,
@@ -20,7 +22,7 @@ export class CanvasViewModel {
 
   constructor() {
     // 최상위 그룹 생성 (모든 컴포넌트의 부모 역할)
-    this.rootGroup = new Group();
+    this.rootGroup = new Group({});
   }
 
   // View 등록
@@ -34,14 +36,19 @@ export class CanvasViewModel {
   }
 
   // 객체 생성
-  public createComponent(type: string, x: number, y: number): void {
+  public createComponent({ type, x, y }: { type: string; x: number; y: number }): void {
     let component: IComponent;
 
     switch (type) {
       case "line":
-        component = new Line();
+        component = new Line({ posX: x, posY: y }); // Line 클래스 사용
         break;
-      // 다른 도형 타입 구현 예정
+      case "rectangle":
+        component = new Rectangle({ posX: x, posY: y }); // Rectangle 클래스 사용
+        break;
+      case "ellipse":
+        component = new Ellipse({ posX: x, posY: y }); // Ellipse 클래스 사용
+        break;
       default:
         return;
     }
@@ -52,11 +59,7 @@ export class CanvasViewModel {
   }
 
   // 객체 선택
-  public selectComponentAt(
-    x: number,
-    y: number,
-    isMultiSelect: boolean = false
-  ): void {
+  public selectComponentAt(x: number, y: number, isMultiSelect: boolean = false): void {
     if (!isMultiSelect) {
       this.selectedComponents = [];
     }
@@ -73,7 +76,7 @@ export class CanvasViewModel {
   // 선택된 객체 이동
   public moveSelectedComponents(dx: number, dy: number): void {
     this.selectedComponents.forEach((component) => {
-      component.move({ x: dx, y: dy });
+      component.move({ dx, dy });
     });
     this.render();
   }
@@ -81,7 +84,7 @@ export class CanvasViewModel {
   // 선택된 객체 크기 조절
   public resizeSelectedComponents(dw: number, dh: number): void {
     this.selectedComponents.forEach((component) => {
-      component.scale({ x: dw, y: dh });
+      component.scale({ width: dw, height: dh });
     });
     this.render();
   }

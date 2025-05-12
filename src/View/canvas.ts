@@ -1,17 +1,14 @@
-import { IComponent } from "../Model/interfaces/component.interface";
-import { CanvasViewModel } from "../ViewModel/canvasViewModel";
+import { IComponent } from "~/Model/interfaces/component.interface";
+import { CanvasViewModel } from "~/ViewModel/canvasViewModel";
+import { Drawer } from "~/ViewModel/drawer";
 
 export class Canvas {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private viewModel: CanvasViewModel;
+  private drawer: Drawer;
 
-  constructor(
-    container: HTMLElement,
-    width: number,
-    height: number,
-    viewModel: CanvasViewModel
-  ) {
+  constructor(container: HTMLElement, width: number, height: number, viewModel: CanvasViewModel) {
     // 캔버스 동적 생성
     this.canvas = document.createElement("canvas");
     this.canvas.width = width;
@@ -23,6 +20,8 @@ export class Canvas {
 
     this.initEventListeners();
     this.viewModel.registerView(this);
+
+    this.drawer = new Drawer(this.ctx);
   }
   private initEventListeners(): void {
     this.canvas.addEventListener("mousedown", (e) => {
@@ -34,17 +33,14 @@ export class Canvas {
   }
 
   // ViewModel이 호출할 렌더링 메서드
-  public render(
-    components: IComponent[],
-    selectedComponents: IComponent[] = []
-  ): void {
+  public render(components: IComponent[], selectedComponents: IComponent[] = []): void {
     // 캔버스 초기화
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     // 모든 컴포넌트 그리기
     components.forEach((component) => {
       // 실제로는 각 컴포넌트 타입에 맞게 그리기 구현 필요
-      component.draw();
+      this.drawer.draw(component.toDrawable());
     });
 
     // 선택된 컴포넌트 표시 (외곽선 등)
