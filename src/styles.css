@@ -1,0 +1,60 @@
+/* 툴바 스타일 */
+.toolbar {
+  display: flex;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.tool-button {
+  padding: 8px 16px;
+  margin-right: 5px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tool-button.selected {
+  background-color: #e0e0ff;
+  border-color: #0044cc;
+}
+
+/* 속성 패널 스타일 */
+.properties-panel {
+  width: 250px;
+  background-color: #f8f8f8;
+  border-left: 1px solid #ccc;
+  padding: 10px;
+}
+
+.properties-panel h3 {
+  margin-top: 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+.property {
+  margin-bottom: 10px;
+}
+
+.property label {
+  display: inline-block;
+  width: 100px;
+}
+
+.property input {
+  width: 100px;
+  padding: 3px;
+}
+
+/* 레이아웃 스타일 */
+.editor-container {
+  display: flex;
+  height: 100vh;
+}
+
+.canvas-container {
+  flex-grow: 1;
+  background-color: #fff;
+}
