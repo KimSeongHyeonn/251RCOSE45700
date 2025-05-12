@@ -1,54 +1,85 @@
-import { ToolType } from "../ViewModel/canvasViewModel";
+import { ToolbarViewModel } from "~/ViewModel/toolbarViewModel";
+import { ToolType } from "~/Model/tools/ToolType";
+import { ITool } from "~/Model/tools/ITool";
 
 export class ToolbarView {
-  private container: HTMLElement;
-  private viewModel: any; // 실제 구현에서는 ToolbarViewModel 타입 사용
+  private toolbar: HTMLElement;
+  private viewModel: ToolbarViewModel;
   private buttons: Map<ToolType, HTMLButtonElement> = new Map();
 
-  constructor(container: HTMLElement, viewModel: any) {
-    this.container = container;
+  constructor(toolbar: HTMLElement, viewModel: ToolbarViewModel) {
+    this.toolbar = toolbar;
     this.viewModel = viewModel;
     this.createToolbar();
-    this.viewModel.registerToolbarView(this);
+    this.viewModel.registerView(this);
   }
 
   private createToolbar(): void {
-    // 툴바 컨테이너 생성
-    const toolbar = document.createElement("div");
-    toolbar.className = "toolbar";
+    this.toolbar.className += " toolbar";
+    this.toolbar.style.display = "flex";
+    this.toolbar.style.flexDirection = "column";
+    this.toolbar.style.padding = "10px";
+    this.toolbar.style.backgroundColor = "#f0f0f0";
+    this.toolbar.style.borderBottom = "1px solid #ddd";
+    this.toolbar.style.minHeight = "40px";
 
-    // 도구 버튼 생성
-    this.createToolButton(ToolType.SELECT, "Select");
-    this.createToolButton(ToolType.LINE, "Line");
-    this.createToolButton(ToolType.RECTANGLE, "Rectangle");
-    this.createToolButton(ToolType.ELLIPSE, "Ellipse");
+    const tools = this.viewModel.getAllTools();
 
-    this.container.appendChild(toolbar);
+    tools.forEach((tool) => {
+      this.createToolButton(tool.type, tool.label, tool.icon);
+    });
   }
 
-  private createToolButton(toolType: ToolType, label: string): void {
+  private createToolButton(
+    toolType: ToolType,
+    label: string,
+    iconClass?: string
+  ): void {
     const button = document.createElement("button");
-    button.textContent = label;
+
+    button.style.width = "100px";
+    button.style.height = "100px";
+    button.style.border = "1px solid #ccc";
+    button.style.borderRadius = "3px";
+    button.style.backgroundColor = "#fff";
+
+    if (iconClass) {
+      const icon = document.createElement("span");
+      icon.className = iconClass;
+      button.appendChild(icon);
+    }
+
+    const labelSpan = document.createElement("span");
+    labelSpan.textContent = label;
+    button.appendChild(labelSpan);
+
     button.className = "tool-button";
     button.addEventListener("click", () => {
       this.viewModel.setTool(toolType);
     });
 
     this.buttons.set(toolType, button);
-    this.container.firstChild?.appendChild(button);
+
+    this.toolbar.appendChild(button);
   }
 
-  // ViewModel에서 호출하는 메서드
   public updateSelectedTool(selectedTool: ToolType): void {
-    // 모든 버튼에서 'selected' 클래스 제거
     this.buttons.forEach((button) => {
       button.classList.remove("selected");
+      button.style.backgroundColor = "#fff";
     });
 
-    // 선택된 도구 버튼에 'selected' 클래스 추가
     const selectedButton = this.buttons.get(selectedTool);
     if (selectedButton) {
       selectedButton.classList.add("selected");
+      selectedButton.style.backgroundColor = "#e0e0ff";
     }
+  }
+
+  public render(tools: ITool[]): void {
+    this.toolbar.innerHTML = "";
+    tools.forEach((tool) => {
+      this.createToolButton(tool.type, tool.label, tool.icon);
+    });
   }
 }

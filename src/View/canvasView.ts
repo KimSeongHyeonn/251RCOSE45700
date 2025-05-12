@@ -2,13 +2,18 @@ import { IComponent } from "~/Model/interfaces/component.interface";
 import { CanvasViewModel } from "~/ViewModel/canvasViewModel";
 import { Drawer } from "~/ViewModel/drawer";
 
-export class Canvas {
+export class CanvasView {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private viewModel: CanvasViewModel;
   private drawer: Drawer;
 
-  constructor(container: HTMLElement, width: number, height: number, viewModel: CanvasViewModel) {
+  constructor(
+    container: HTMLElement,
+    width: number,
+    height: number,
+    viewModel: CanvasViewModel
+  ) {
     // 캔버스 동적 생성
     this.canvas = document.createElement("canvas");
     this.canvas.width = width;
@@ -33,7 +38,10 @@ export class Canvas {
   }
 
   // ViewModel이 호출할 렌더링 메서드
-  public render(components: IComponent[], selectedComponents: IComponent[] = []): void {
+  public render(
+    components: IComponent[],
+    selectedComponents: IComponent[] = []
+  ): void {
     // 캔버스 초기화
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 

@@ -3,7 +3,7 @@ import { Ellipse } from "~/Model/objects/ellipse.object";
 import { Group } from "~/Model/objects/group.object";
 import { Line } from "~/Model/objects/line.object";
 import { Rectangle } from "~/Model/objects/rectangle.object";
-import { Canvas } from "~/View/canvas";
+import { CanvasView } from "~/View/canvasView";
 
 export enum ToolType {
   SELECT,
@@ -16,27 +16,28 @@ export enum ToolType {
 export class CanvasViewModel {
   private components: IComponent[] = [];
   private selectedComponents: IComponent[] = [];
-  private view: Canvas | null = null;
-  private currentTool: ToolType = ToolType.SELECT;
+  private view: CanvasView | null = null;
   private rootGroup: Group;
 
   constructor() {
-    // 최상위 그룹 생성 (모든 컴포넌트의 부모 역할)
     this.rootGroup = new Group({});
   }
 
   // View 등록
-  public registerView(view: Canvas): void {
+  public registerView(view: CanvasView): void {
     this.view = view;
   }
 
-  // 도구 변경
-  public setTool(tool: ToolType): void {
-    this.currentTool = tool;
-  }
-
   // 객체 생성
-  public createComponent({ type, x, y }: { type: string; x: number; y: number }): void {
+  public createComponent({
+    type,
+    x,
+    y,
+  }: {
+    type: string;
+    x: number;
+    y: number;
+  }): void {
     let component: IComponent;
 
     switch (type) {
@@ -59,7 +60,11 @@ export class CanvasViewModel {
   }
 
   // 객체 선택
-  public selectComponentAt(x: number, y: number, isMultiSelect: boolean = false): void {
+  public selectComponentAt(
+    x: number,
+    y: number,
+    isMultiSelect: boolean = false
+  ): void {
     if (!isMultiSelect) {
       this.selectedComponents = [];
     }

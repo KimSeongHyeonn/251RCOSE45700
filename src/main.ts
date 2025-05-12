@@ -1,55 +1,63 @@
-import { Canvas } from "./View/canvas";
+import { CanvasView } from "./View/canvasView";
 import { ToolbarView } from "./View/toolbarView";
 import { PropertiesPanelView } from "./View/propertiesPanelView";
 import { CanvasViewModel } from "./ViewModel/canvasViewModel";
+import { ToolbarViewModel } from "./ViewModel/toolbarViewModel";
+import { PropertiesPanelViewModel } from "./ViewModel/propertiesPanelViewModel";
 
 function initializeApp() {
   // 전체 에디터 컨테이너 생성
   const editorContainer = document.createElement("div");
   editorContainer.className = "editor-container";
+  editorContainer.style.display = "flex";
+  editorContainer.style.flexDirection = "row";
+  editorContainer.style.width = "100%";
+  editorContainer.style.height = "100%";
   document.body.appendChild(editorContainer);
 
   // 툴바 컨테이너
   const toolbarContainer = document.createElement("div");
   toolbarContainer.id = "toolbar-container";
+  toolbarContainer.style.width = "100px";
+  toolbarContainer.style.height = "600px";
+  toolbarContainer.style.border = "1px solid #ddd";
   editorContainer.appendChild(toolbarContainer);
-
-  // 메인 레이아웃 컨테이너
-  const mainContainer = document.createElement("div");
-  mainContainer.className = "main-container";
-  mainContainer.style.display = "flex";
-  mainContainer.style.flexGrow = "1";
-  editorContainer.appendChild(mainContainer);
 
   // 캔버스 컨테이너
   const canvasContainer = document.createElement("div");
   canvasContainer.id = "canvas-container";
   canvasContainer.className = "canvas-container";
-  mainContainer.appendChild(canvasContainer);
+  editorContainer.appendChild(canvasContainer);
 
   // 속성 패널 컨테이너
   const propertiesContainer = document.createElement("div");
   propertiesContainer.id = "properties-container";
-  mainContainer.appendChild(propertiesContainer);
+  propertiesContainer.style.width = "250px";
+  editorContainer.appendChild(propertiesContainer);
 
   // ViewModel 생성
-  const viewModel = new CanvasViewModel();
+  const canvasViewModel = new CanvasViewModel();
+  const toolbarViewModel = new ToolbarViewModel();
+  const propertiesPanelViewModel = new PropertiesPanelViewModel();
 
   // 각 View 생성
-  const canvasView = new Canvas(canvasContainer, 800, 600, viewModel);
-  const toolbarView = new ToolbarView(toolbarContainer, viewModel);
+  const toolbarView = new ToolbarView(toolbarContainer, toolbarViewModel);
+  const canvasView = new CanvasView(canvasContainer, 800, 600, canvasViewModel);
   const propertiesView = new PropertiesPanelView(
     propertiesContainer,
-    viewModel
+    propertiesPanelViewModel
   );
+
+  // ViewModel 간 연결
 
   // 초기 렌더링
   //viewModel.initialize();
   // 초기 렌더링 (예시로 몇 개의 컴포넌트 추가)
-  viewModel.createComponent({ type: "rectangle", x: 100, y: 100 });
-  viewModel.createComponent({ type: "ellipse", x: 200, y: 200 });
-  viewModel.createComponent({ type: "line", x: 300, y: 300 });
-  view.render(viewModel.getComponents());
+  canvasViewModel.createComponent({ type: "rectangle", x: 100, y: 100 });
+  canvasViewModel.createComponent({ type: "ellipse", x: 200, y: 200 });
+  canvasViewModel.createComponent({ type: "line", x: 300, y: 300 });
+  canvasView.render(canvasViewModel.getComponents());
+  toolbarView.render(toolbarViewModel.getAllTools());
 }
 
 // 페이지 로드 시 초기화
