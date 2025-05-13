@@ -9,6 +9,7 @@ export interface DrawableShapeBase {
   strokeStyle?: string;
   fillStyle?: string;
   lineWidth?: number;
+  lineDash?: number[];
 }
 
 export interface DrawableRectangle extends DrawableShapeBase {

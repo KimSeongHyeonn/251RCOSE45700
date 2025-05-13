@@ -7,7 +7,10 @@ export interface IComponent {
 
   scale({ width, height }: { width: number; height: number }): void;
 
+  isContainPoint({ x, y }: { x: number; y: number }): boolean;
+
   get id(): number;
+  get type(): string;
   get posX(): number;
   get posY(): number;
   get width(): number;

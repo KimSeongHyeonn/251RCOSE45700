@@ -43,10 +43,7 @@ function initializeApp() {
   // 각 View 생성
   const toolbarView = new ToolbarView(toolbarContainer, toolbarViewModel);
   const canvasView = new CanvasView(canvasContainer, 800, 600, canvasViewModel);
-  const propertiesView = new PropertiesPanelView(
-    propertiesContainer,
-    propertiesPanelViewModel
-  );
+  const propertiesView = new PropertiesPanelView(propertiesContainer, propertiesPanelViewModel);
 
   // ViewModel 간 연결
 
@@ -56,6 +53,7 @@ function initializeApp() {
   canvasViewModel.createComponent({ type: "rectangle", x: 100, y: 100 });
   canvasViewModel.createComponent({ type: "ellipse", x: 200, y: 200 });
   canvasViewModel.createComponent({ type: "line", x: 300, y: 300 });
+  canvasViewModel.createComponent({ type: "selected", x: 400, y: 400 });
   canvasView.render(canvasViewModel.getComponents());
   toolbarView.render(toolbarViewModel.getAllTools());
 }

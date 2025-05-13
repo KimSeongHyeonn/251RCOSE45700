@@ -11,6 +11,7 @@ export abstract class Component implements IComponent {
   private _fillStyle: string;
   private _strokeStyle: string;
   private _lineWidth: number;
+  private _lineDash: number[];
 
   private readonly DefaultFillStyles = ["#DDEEFF", "#DFFFE0", "#FFE5D9", "#EBDFFC"];
 
@@ -23,6 +24,7 @@ export abstract class Component implements IComponent {
     this._fillStyle = this.DefaultFillStyles[Math.floor(Math.random() * this.DefaultFillStyles.length)]; // 기본 채우기 색상: 랜덤
     this._strokeStyle = "#000000"; // 기본 선 색상: 검정색
     this._lineWidth = 1;
+    this._lineDash = [0, 0]; // 기본 선 스타일: 실선
   }
 
   public abstract toDrawable(): DrawableShape[];
@@ -36,6 +38,12 @@ export abstract class Component implements IComponent {
     this._width = width;
     this._height = height;
   }
+
+  public isContainPoint({ x, y }: { x: number; y: number }): boolean {
+    return x >= this._posX && x <= this._posX + this._width && y >= this._posY && y <= this._posY + this._height;
+  }
+
+  public abstract get type(): string;
 
   public get id(): number {
     return this._id;
@@ -67,5 +75,9 @@ export abstract class Component implements IComponent {
 
   public get lineWidth(): number {
     return this._lineWidth;
+  }
+
+  public get lineDash(): number[] {
+    return this._lineDash;
   }
 }
