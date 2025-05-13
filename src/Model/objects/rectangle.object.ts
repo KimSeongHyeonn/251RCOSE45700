@@ -17,7 +17,12 @@ export class Rectangle extends Component {
         fillStyle: this.fillStyle,
         strokeStyle: this.strokeStyle,
         lineWidth: this.lineWidth,
+        lineDash: this.lineDash,
       },
     ];
+  }
+
+  public get type(): string {
+    return "rectangle";
   }
 }

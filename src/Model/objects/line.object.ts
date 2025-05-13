@@ -16,7 +16,12 @@ export class Line extends Component {
         y2: this.posY + this.height,
         strokeStyle: this.strokeStyle,
         lineWidth: this.lineWidth,
+        lineDash: this.lineDash,
       },
     ];
+  }
+
+  public get type(): string {
+    return "line";
   }
 }

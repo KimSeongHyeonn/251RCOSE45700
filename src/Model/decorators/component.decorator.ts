@@ -18,8 +18,16 @@ export abstract class ComponentDecorator implements IComponent {
     this.component.scale({ width, height });
   }
 
+  public isContainPoint({ x, y }: { x: number; y: number }): boolean {
+    return this.component.isContainPoint({ x, y });
+  }
+
   public get id(): number {
     return this.component.id;
+  }
+
+  public get type(): string {
+    return this.component.type;
   }
 
   public get posX(): number {

@@ -13,7 +13,20 @@ export class SelectedComponentDecorator extends ComponentDecorator {
 
   public toDrawable(): DrawableShape[] {
     this.updateHandlePositions();
-    return [...this.component.toDrawable(), ...this.toDrawableResizeHandlers()];
+    return [
+      ...this.component.toDrawable(),
+      {
+        type: "rectangle",
+        x: this.component.posX,
+        y: this.component.posY,
+        width: this.component.width,
+        height: this.component.height,
+        strokeStyle: "#000000", // Selection border color
+        lineWidth: 0.8,
+        lineDash: [4, 2], // Dashed line
+      },
+      ...this.toDrawableResizeHandlers(),
+    ];
   }
 
   private toDrawableResizeHandlers(): DrawableShape[] {
@@ -119,6 +132,8 @@ export class Handle {
         y: this.y - this.size / 2,
         width: this.size,
         height: this.size,
+        fillStyle: "#FFFFFF", // Handle color
+        strokeStyle: "#000000", // Handle border color
       },
     ];
   }
