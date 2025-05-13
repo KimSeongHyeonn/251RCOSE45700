@@ -21,4 +21,8 @@ export class Rectangle extends Component {
       },
     ];
   }
+
+  public get type(): string {
+    return "rectangle";
+  }
 }

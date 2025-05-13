@@ -15,10 +15,6 @@ export class Group implements IComponent {
     this.children.push(component);
   }
 
-  public remove({ component }: { component: IComponent }): void {
-    this.children = this.children.filter((c) => c !== component);
-  }
-
   public getChildren(): IComponent[] {
     return this.children;
   }
@@ -59,8 +55,21 @@ export class Group implements IComponent {
     }
   }
 
+  public isContainPoint({ x, y }: { x: number; y: number }): boolean {
+    for (const child of this.children) {
+      if (child.isContainPoint({ x, y })) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public get id(): number {
     return this._id;
+  }
+
+  public get type(): string {
+    return "Group";
   }
 
   public get posX(): number {

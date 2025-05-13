@@ -21,4 +21,8 @@ export class Ellipse extends Component {
       },
     ];
   }
+
+  public get type(): string {
+    return "ellipse";
+  }
 }

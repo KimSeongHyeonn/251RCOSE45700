@@ -39,6 +39,12 @@ export abstract class Component implements IComponent {
     this._height = height;
   }
 
+  public isContainPoint({ x, y }: { x: number; y: number }): boolean {
+    return x >= this._posX && x <= this._posX + this._width && y >= this._posY && y <= this._posY + this._height;
+  }
+
+  public abstract get type(): string;
+
   public get id(): number {
     return this._id;
   }

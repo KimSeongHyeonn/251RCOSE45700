@@ -20,4 +20,8 @@ export class Line extends Component {
       },
     ];
   }
+
+  public get type(): string {
+    return "line";
+  }
 }

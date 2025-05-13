@@ -53,6 +53,7 @@ function initializeApp() {
   canvasViewModel.createComponent({ type: "rectangle", x: 100, y: 100 });
   canvasViewModel.createComponent({ type: "ellipse", x: 200, y: 200 });
   canvasViewModel.createComponent({ type: "line", x: 300, y: 300 });
+  canvasViewModel.createComponent({ type: "selected", x: 400, y: 400 });
   canvasView.render(canvasViewModel.getComponents());
   toolbarView.render(toolbarViewModel.getAllTools());
 }
