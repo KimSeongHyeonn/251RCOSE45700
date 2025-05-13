@@ -37,17 +37,6 @@ function initializeApp() {
 
   // ViewModel 생성
   const canvasViewModel = new CanvasViewModel();
-  const toolbarViewModel = new ToolbarViewModel();
-  const propertiesPanelViewModel = new PropertiesPanelViewModel();
-
-  // 각 View 생성
-  const toolbarView = new ToolbarView(toolbarContainer, toolbarViewModel);
-  const canvasView = new CanvasView(canvasContainer, 800, 600, canvasViewModel);
-  const propertiesView = new PropertiesPanelView(
-    propertiesContainer,
-    propertiesPanelViewModel
-  );
-
   // ViewModel 간 연결
 
   // 초기 렌더링
@@ -56,8 +45,22 @@ function initializeApp() {
   canvasViewModel.createComponent({ type: "rectangle", x: 100, y: 100 });
   canvasViewModel.createComponent({ type: "ellipse", x: 200, y: 200 });
   canvasViewModel.createComponent({ type: "line", x: 300, y: 300 });
+  const toolbarViewModel = new ToolbarViewModel();
+  const propertiesPanelViewModel = new PropertiesPanelViewModel({
+    testComponent: canvasViewModel.getComponents()[0],
+  });
+
+  // 각 View 생성
+  const toolbarView = new ToolbarView(toolbarContainer, toolbarViewModel);
+  const canvasView = new CanvasView(canvasContainer, 800, 600, canvasViewModel);
+  const propertiesPanelView = new PropertiesPanelView(
+    propertiesContainer,
+    propertiesPanelViewModel
+  );
+
   canvasView.render(canvasViewModel.getComponents());
   toolbarView.render(toolbarViewModel.getAllTools());
+  propertiesPanelView.render();
 }
 
 // 페이지 로드 시 초기화

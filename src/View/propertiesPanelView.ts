@@ -1,67 +1,117 @@
-import { PropertiesPanelViewModel } from "~/ViewModel/propertiesPanelViewModel";
 import { PropertyEditorFactory } from "~/Model/properties/PropertyEditorFactory";
-import { ComponentMetadata } from "~/Model/components/ComponentMetadata";
+import {
+  PropertiesPanelViewModel,
+  PropertyChangeEvent,
+} from "~/ViewModel/propertiesPanelViewModel";
 
 export class PropertiesPanelView {
-  private panel: HTMLElement;
-  private viewModel: PropertiesPanelViewModel;
-  private editorElements: Map<string, HTMLElement> = new Map();
+  private container: HTMLElement;
+  private propertyEditors: Map<string, HTMLElement> = new Map();
 
-  constructor(panel: HTMLElement, viewModel: PropertiesPanelViewModel) {
-    this.panel = panel;
-    this.viewModel = viewModel;
-    this.createPanel();
+  constructor(
+    container: HTMLElement,
+    private viewModel: PropertiesPanelViewModel
+  ) {
+    this.container = container;
     this.viewModel.registerView(this);
+    this.viewModel.onPropertyChanged((event: PropertyChangeEvent) => {
+      this.handlePropertyChange(event);
+    });
   }
 
-  private createPanel(): void {
-    this.panel.className += " properties-panel";
-    this.panel.style.padding = "10px";
-    this.panel.style.backgroundColor = "#f5f5f5";
-    this.panel.style.border = "1px solid #ddd";
-    this.panel.style.minWidth = "200px";
-
-    const header = document.createElement("h3");
-    header.textContent = "속성";
-    header.style.margin = "0 0 10px 0";
-    header.style.padding = "0 0 5px 0";
-    header.style.borderBottom = "1px solid #ddd";
-
-    this.panel.appendChild(header);
-
-    const content = document.createElement("div");
-    content.className = "properties-content";
-    this.panel.appendChild(content);
-  }
-
+  // ViewModel에서 호출되는 메서드
   public updateProperties(): void {
-    const content = this.panel.querySelector(
-      ".properties-content"
-    ) as HTMLElement;
-    if (!content) return;
+    this.render();
+  }
 
-    content.innerHTML = "";
-    this.editorElements.clear();
-
+  public render(): void {
     const component = this.viewModel.getSelectedComponent();
+    this.container.innerHTML = "";
+    this.propertyEditors.clear();
+
     if (!component) {
-      const message = document.createElement("p");
-      message.textContent = "선택된 컴포넌트가 없습니다";
-      message.style.color = "#999";
-      content.appendChild(message);
+      this.renderEmptyState();
       return;
     }
 
-    // 컴포넌트 타입 정보 표시
-    const typeInfo = document.createElement("div");
-    typeInfo.className = "component-type";
-    typeInfo.style.marginBottom = "10px";
-    typeInfo.style.fontWeight = "bold";
-    content.appendChild(typeInfo);
+    const header = document.createElement("div");
+    header.className = "properties-header";
 
-    // 속성 목록 가져오기
-    // const properties = this.viewModel.getComponentProperties();
+    const id = document.createElement("div");
+    id.className = "component-id";
+    id.textContent = `ID: ${component.id}`;
+    header.appendChild(id);
 
-    // 각 속성에 대해 에디터 생성
+    this.container.appendChild(header);
+
+    const divider = document.createElement("hr");
+    this.container.appendChild(divider);
+    const propsSection = document.createElement("div");
+    propsSection.className = "properties-section";
+
+    this.addPropertyEditor("width", "number", component.width || 0);
+    this.addPropertyEditor("height", "number", component.height || 0);
+    this.addPropertyEditor("x", "number", component.posX);
+    this.addPropertyEditor("y", "number", component.posY);
+  }
+
+  private renderEmptyState(): void {
+    const emptyState = document.createElement("div");
+    emptyState.className = "empty-state";
+
+    const message = document.createElement("p");
+    message.textContent = "컴포넌트를 선택하세요";
+    emptyState.appendChild(message);
+
+    this.container.appendChild(emptyState);
+  }
+
+  private addPropertyEditor(
+    propertyName: string,
+    propertyType: string,
+    value: any
+  ): void {
+    const editor = PropertyEditorFactory.getEditor(propertyType);
+    const editorElement = editor.createEditor(propertyName, value, (newValue) =>
+      this.onPropertyValueChanged(propertyName, newValue)
+    );
+
+    editorElement.classList.add("property-row");
+    this.container.appendChild(editorElement);
+    this.propertyEditors.set(propertyName, editorElement);
+  }
+
+  private onPropertyValueChanged(propertyName: string, newValue: any): void {
+    const component = this.viewModel.getSelectedComponent();
+    if (!component) return;
+
+    // ViewModel을 통해 속성 변경 이벤트 발생
+    this.viewModel.updateProperty(component.id, propertyName, newValue);
+  }
+
+  private handlePropertyChange(event: PropertyChangeEvent): void {
+    const component = this.viewModel.getSelectedComponent();
+    if (!component) return;
+
+    // UI 업데이트
+    const editorElement = this.propertyEditors.get(event.propertyName);
+    if (editorElement) {
+      const editor = PropertyEditorFactory.getEditor(
+        this.getPropertyType(event.propertyName)
+      );
+      editor.setValue(editorElement, event.newValue);
+    }
+  }
+
+  private getPropertyType(propertyName: string): string {
+    // 속성 이름에 따른 타입 매핑
+    const typeMap: Record<string, string> = {
+      width: "number",
+      height: "number",
+      x: "number",
+      y: "number",
+    };
+
+    return typeMap[propertyName] || "string";
   }
 }

@@ -3,11 +3,10 @@ import {
   PropertyMetadata,
 } from "~/Model/components/ComponentMetadata";
 import { IComponent } from "~/Model/interfaces/component.interface";
-import { PropertyEditorFactory } from "~/Model/properties/PropertyEditorFactory";
 import { EventEmitter } from "~/Utils/eventEmitter";
 
 export interface PropertyChangeEvent {
-  componentId: string;
+  componentId: number;
   propertyName: string;
   newValue: any;
 }
@@ -17,7 +16,9 @@ export class PropertiesPanelViewModel {
   private propertyChangeEmitter = new EventEmitter<PropertyChangeEvent>();
   private views: Set<any> = new Set();
 
-  constructor() {}
+  constructor({ testComponent }: { testComponent: IComponent }) {
+    this.selectedComponent = testComponent;
+  }
 
   public registerView(view: any): void {
     this.views.add(view);
@@ -47,6 +48,24 @@ export class PropertiesPanelViewModel {
   private notifyViewsUpdate(): void {
     this.views.forEach((view) => {
       view.updateProperties();
+    });
+  }
+
+  public updateProperty(
+    componentId: number,
+    propertyName: string,
+    newValue: any
+  ): void {
+    if (!this.selectedComponent) return;
+
+    // 컴포넌트 속성 업데이트
+    (this.selectedComponent as any)[propertyName] = newValue;
+
+    // 이벤트 발생
+    this.propertyChangeEmitter.emit("propertyChanged", {
+      componentId,
+      propertyName,
+      newValue,
     });
   }
 }
