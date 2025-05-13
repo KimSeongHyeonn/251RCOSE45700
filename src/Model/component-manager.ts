@@ -74,6 +74,40 @@ export class ComponentManagerModel {
     return true;
   }
 
+  public bringSelectedToFront(): void {
+    if (this._selectedIds.size === 0) return;
+
+    const selectedComponents: IComponent[] = [];
+    const nonSelectedComponents: IComponent[] = [];
+
+    for (const comp of this._components) {
+      if (this._selectedIds.has(comp.id)) {
+        selectedComponents.push(comp);
+      } else {
+        nonSelectedComponents.push(comp);
+      }
+    }
+
+    this._components = [...nonSelectedComponents, ...selectedComponents];
+  }
+
+  public sendSelectedToBack(): void {
+    if (this._selectedIds.size === 0) return;
+
+    const selectedComponents: IComponent[] = [];
+    const nonSelectedComponents: IComponent[] = [];
+
+    for (const comp of this._components) {
+      if (this._selectedIds.has(comp.id)) {
+        selectedComponents.push(comp);
+      } else {
+        nonSelectedComponents.push(comp);
+      }
+    }
+
+    this._components = [...selectedComponents, ...nonSelectedComponents];
+  }
+
   public selectComponent(componentId: number): void {
     const component = this._components.find((c) => c.id === componentId);
     if (component && !this._selectedIds.has(component.id)) {
