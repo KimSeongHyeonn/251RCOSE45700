@@ -1,7 +1,9 @@
 import { ToolType } from "~/ViewModel/tools/ToolType";
 import { ITool } from "~/ViewModel/tools/ITool";
 import { CanvasViewModel } from "~/ViewModel/canvasViewModel";
-export class ToolbarView {
+import { Subscriber } from "~/Utils/subscriber.interface";
+
+export class ToolbarView implements Subscriber<null> {
   private toolbar: HTMLElement;
   private viewModel: CanvasViewModel;
   private buttons: Map<ToolType, HTMLButtonElement> = new Map();
@@ -77,5 +79,9 @@ export class ToolbarView {
     if (currentTool) {
       this.updateSelectedTool(currentTool.type);
     }
+  }
+
+  public update(data: null): void {
+    this.render(this.viewModel.getAllTools());
   }
 }

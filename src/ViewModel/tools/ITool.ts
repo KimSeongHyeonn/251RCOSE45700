@@ -1,8 +1,31 @@
+import { ICommand } from "~/Commands/interfaces/command.interface";
 import { ToolType } from "./ToolType";
+import { ComponentManagerModel } from "~/Model/component-manager";
 
 export interface ITool {
   readonly type: ToolType;
   readonly label: string;
   readonly icon?: string;
-  execute(context: any): void; // 도구가 선택됐을 때 실행할 동작
+  getCommandOnClick({
+    componentManager,
+    x,
+    y,
+  }: {
+    componentManager: ComponentManagerModel;
+    x: number;
+    y: number;
+  }): ICommand;
+  getCommandOnDrag({
+    componentManager,
+    startX,
+    startY,
+    endX,
+    endY,
+  }: {
+    componentManager: ComponentManagerModel;
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+  }): ICommand;
 }

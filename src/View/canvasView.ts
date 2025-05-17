@@ -1,13 +1,16 @@
 import { IComponent } from "~/Model/interfaces/component.interface";
 import { DrawableShape } from "~/Model/interfaces/drawable-shape.interface";
+import { Subscriber } from "~/Utils/subscriber.interface";
 import { CanvasViewModel, ToolType } from "~/ViewModel/canvasViewModel";
 import { Drawer } from "~/ViewModel/drawer";
 
-export class CanvasView {
+export class CanvasView implements Subscriber<null> {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private viewModel: CanvasViewModel;
   private drawer: Drawer;
+  private dragStartX: number = 0;
+  private dragStartY: number = 0;
 
   constructor(
     container: HTMLElement,
@@ -19,6 +22,7 @@ export class CanvasView {
     this.canvas = document.createElement("canvas");
     this.canvas.width = width;
     this.canvas.height = height;
+    this.canvas.draggable = true; // 드래그 가능하도록 설정
     container.appendChild(this.canvas);
 
     this.ctx = this.canvas.getContext("2d")!;
@@ -35,7 +39,10 @@ export class CanvasView {
    * @param e 마우스 이벤트
    * @returns 캔버스 내의 x, y 좌표
    */
-  private getCanvasCoordinates(e: MouseEvent): { x: number; y: number } {
+  private getCanvasCoordinates(e: MouseEvent | DragEvent): {
+    x: number;
+    y: number;
+  } {
     const rect = this.canvas.getBoundingClientRect();
     return {
       x: e.clientX - rect.left,
@@ -53,23 +60,37 @@ export class CanvasView {
       });
     });
 
-    // 마우스 이동 이벤트 - 드래그 처리 등을 위해 필요할 경우
-    this.canvas.addEventListener("mousemove", (e) => {
+    // 드래그 시작 이벤트
+    this.canvas.addEventListener("dragstart", (e) => {
       const { x, y } = this.getCanvasCoordinates(e);
-      // 필요한 경우 여기에 드래그 로직 추가
+      this.dragStartX = x;
+      this.dragStartY = y;
     });
 
-    // 마우스 업 이벤트 - 드래그 종료 등을 위해 필요할 경우
-    this.canvas.addEventListener("mouseup", (e) => {
-      const { x, y } = this.getCanvasCoordinates(e);
-      // 필요한 경우 여기에 드래그 완료 로직 추가
+    // 드래그 중 이벤트
+    this.canvas.addEventListener("drag", (e) => {
+      // 드래그 중 로직이 필요하면 여기에 추가
+    });
+
+    // 드래그 종료 이벤트
+    this.canvas.addEventListener("dragend", (e) => {
+      const { x: dragEndX, y: dragEndY } = this.getCanvasCoordinates(e);
+      this.viewModel.onDrag({
+        startX: this.dragStartX,
+        startY: this.dragStartY,
+        endX: dragEndX,
+        endY: dragEndY,
+      });
     });
   }
 
-  // ViewModel이 호출할 렌더링 메서드
-  public render(drawables: DrawableShape[]): void {
+  private render(drawables: DrawableShape[]): void {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.drawer.draw(drawables);
+  }
+
+  public update(data: null): void {
+    this.render(this.viewModel.getAllDrawables());
   }
 }

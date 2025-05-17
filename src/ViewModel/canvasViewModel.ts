@@ -1,9 +1,4 @@
-import { SelectedComponentDecorator } from "~/Model/decorators/selected-component.decorator";
 import { IComponent } from "~/Model/interfaces/component.interface";
-import { Ellipse } from "~/Model/objects/ellipse.object";
-import { Group } from "~/Model/objects/group.object";
-import { Line } from "~/Model/objects/line.object";
-import { Rectangle } from "~/Model/objects/rectangle.object";
 import { ITool } from "~/ViewModel/tools/ITool";
 import { ToolFactory } from "~/ViewModel/tools/ToolFactory";
 import { CanvasView } from "~/View/canvasView";
@@ -12,15 +7,14 @@ import { ToolbarView } from "~/View/toolbarView";
 import { CommandInvoker } from "~/Commands/command-invoker";
 import { ICommand } from "~/Commands/interfaces/command.interface";
 import { ComponentManagerModel } from "~/Model/component-manager";
-import { CreateRectangleCommand } from "~/Commands/create-rectangle.command";
-import { CreateLineCommand } from "~/Commands/create-line.command";
-import { CreateEllipseCommand } from "~/Commands/create-ellipse.command";
-import { SelectCommand } from "~/Commands/select.command";
-import { ClearSelectCoomand } from "~/Commands/clear-select.command";
 import { MoveCommand } from "~/Commands/move.command";
 import { ScaleCommand } from "~/Commands/scale.command";
 import { BringToFrontCommand } from "~/Commands/bring-to-front.command";
 import { SendToBackCommand } from "~/Commands/send-to-back.command";
+import { Observable } from "~/Utils/observable.interface";
+import { Subscriber } from "~/Utils/subscriber.interface";
+import { DrawableShape } from "~/Model/interfaces/drawable-shape.interface";
+import { SetPropertyCommand } from "~/Commands/set-property.command";
 
 export enum ToolType {
   SELECT,
@@ -30,11 +24,12 @@ export enum ToolType {
   TEXT,
 }
 
-export class CanvasViewModel {
+export class CanvasViewModel implements Subscriber<null>, Observable<null> {
   private currentTool: ITool;
   private tools: ITool[];
   private commandInvoker: CommandInvoker;
   private componentManager: ComponentManagerModel;
+  private observers: Subscriber<null>[] = [];
 
   private propertiesPanelView: PropertiesPanelView | null = null;
   private toolbarView: ToolbarView | null = null;
@@ -46,6 +41,7 @@ export class CanvasViewModel {
     this.setTool(ToolType.SELECT);
     this.commandInvoker = new CommandInvoker();
     this.componentManager = ComponentManagerModel.getInstance();
+    this.componentManager.subscribe(this);
   }
 
   // View 등록
@@ -55,11 +51,33 @@ export class CanvasViewModel {
 
   public registerPropertiesPanelView(view: PropertiesPanelView): void {
     this.propertiesPanelView = view;
+    this.propertiesPanelView.update(null);
   }
 
   public registerToolbarView(view: ToolbarView): void {
     this.toolbarView = view;
-    this.notifyToolChanged();
+    this.toolbarView.update(null);
+  }
+
+  public onPropertyValueChange({
+    x,
+    y,
+    width,
+    height,
+  }: {
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+  }): void {
+    const command = new SetPropertyCommand(
+      this.componentManager,
+      x,
+      y,
+      width,
+      height
+    );
+    this.executeCommand(command);
   }
 
   /*
@@ -68,51 +86,41 @@ export class CanvasViewModel {
 
   // 객체 생성
   public onClick({ x, y }: { x: number; y: number }): void {
-    // 기본 크기 설정
-    const defaultWidth = 100;
-    const defaultHeight = 100;
+    const command = this.currentTool.getCommandOnClick({
+      componentManager: this.componentManager,
+      x,
+      y,
+    });
+    this.executeCommand(command);
+  }
 
-    // 명령 객체 생성
+  public onDrag({
+    startX,
+    startY,
+    endX,
+    endY,
+  }: {
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+  }): void {
     let command: ICommand;
-
-    switch (this.currentTool.type) {
-      case ToolType.SELECT:
-        const component = this.componentManager.getComponentAtPoint(x, y);
-        if (component) {
-          command = new SelectCommand(this.componentManager, component);
-        } else {
-          command = new ClearSelectCoomand(this.componentManager);
-        }
-        break;
-      case ToolType.LINE:
-        command = new CreateLineCommand(this.componentManager, {
-          x,
-          y,
-          width: defaultWidth,
-          height: defaultHeight,
-        });
-        break;
-      case ToolType.RECTANGLE:
-        command = new CreateRectangleCommand(this.componentManager, {
-          x,
-          y,
-          width: defaultWidth,
-          height: defaultHeight,
-        });
-        break;
-      case ToolType.ELLIPSE:
-        command = new CreateEllipseCommand(this.componentManager, {
-          x,
-          y,
-          width: defaultWidth,
-          height: defaultHeight,
-        });
-        break;
-      default:
-        return;
+    if (Math.abs(startX - endX) < 5 && Math.abs(startY - endY) < 5) {
+      command = this.currentTool.getCommandOnClick({
+        componentManager: this.componentManager,
+        x: startX,
+        y: startY,
+      });
+    } else {
+      command = this.currentTool.getCommandOnDrag({
+        componentManager: this.componentManager,
+        startX,
+        startY,
+        endX,
+        endY,
+      });
     }
-
-    // 명령 실행
     this.executeCommand(command);
   }
 
@@ -139,19 +147,6 @@ export class CanvasViewModel {
     this.executeCommand(command);
   }
 
-  // 렌더링 요청
-  public render(): void {
-    if (this.canvasView) {
-      this.canvasView.render(this.componentManager.getAllDrawables());
-    }
-    if (this.toolbarView) {
-      this.toolbarView.render(this.tools);
-    }
-    if (this.propertiesPanelView) {
-      this.propertiesPanelView.render();
-    }
-  }
-
   public getSelectedComponents(): IComponent[] {
     return this.componentManager.getSelectedComponents();
   }
@@ -163,9 +158,6 @@ export class CanvasViewModel {
   public setTool(toolType: ToolType): void {
     const tool = ToolFactory.getTool(toolType);
     this.currentTool = tool;
-
-    // 도구의 execute 메소드 실행
-    tool.execute(null); // 컨텍스트는 필요에 따라 전달
 
     // View에 알림
     this.notifyToolChanged();
@@ -181,7 +173,7 @@ export class CanvasViewModel {
 
   private notifyToolChanged(): void {
     if (this.toolbarView) {
-      this.toolbarView.updateSelectedTool(this.currentTool.type);
+      this.toolbarView.update(null);
     }
   }
 
@@ -195,6 +187,25 @@ export class CanvasViewModel {
    */
   public executeCommand(command: ICommand): void {
     this.commandInvoker.executeCommand(command);
-    this.render(); // 명령 실행 후 화면 갱신
+  }
+
+  public notify(): void {
+    this.observers.forEach((observer) => observer.update(null));
+  }
+
+  public update(data: null): void {
+    this.notify();
+  }
+
+  public subscribe(observer: Subscriber<null>): void {
+    this.observers.push(observer);
+  }
+
+  public unsubscribe(observer: Subscriber<null>): void {
+    this.observers = this.observers.filter((o) => o !== observer);
+  }
+
+  public getAllDrawables(): DrawableShape[] {
+    return this.componentManager.getAllDrawables();
   }
 }

@@ -1,57 +1,224 @@
+import { MoveCommand } from "~/Commands/move.command";
 import { ITool } from "./ITool";
 import { ToolType } from "./ToolType";
-
+import { ICommand } from "~/Commands/interfaces/command.interface";
+import { SelectCommand } from "~/Commands/select.command";
+import { ComponentManagerModel } from "~/Model/component-manager";
+import { CreateLineCommand } from "~/Commands/create-line.command";
+import { CreateRectangleCommand } from "~/Commands/create-rectangle.command";
+import { CreateEllipseCommand } from "~/Commands/create-ellipse.command";
+import { ClearSelectCoomand } from "~/Commands/clear-select.command";
+import { ScaleCommand } from "~/Commands/scale.command";
 export class SelectTool implements ITool {
   readonly type = ToolType.SELECT;
   readonly label = "선택";
-  readonly icon = "select-icon"; // CSS 클래스 또는 아이콘 경로
 
-  execute(context: any): void {
-    // 선택 도구 실행 로직
-    console.log("선택 도구 활성화");
+  getCommandOnClick({
+    componentManager,
+    x,
+    y,
+  }: {
+    componentManager: ComponentManagerModel;
+    x: number;
+    y: number;
+  }): ICommand {
+    const component = componentManager.getComponentAtPoint(x, y);
+    if (component) {
+      return new SelectCommand(componentManager, component);
+    } else {
+      return new ClearSelectCoomand(componentManager);
+    }
+  }
+
+  getCommandOnDrag({
+    componentManager,
+    startX,
+    startY,
+    endX,
+    endY,
+  }: {
+    componentManager: ComponentManagerModel;
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+  }): ICommand {
+    const dx = endX - startX;
+    const dy = endY - startY;
+    const selectedComponents = componentManager.getSelectedComponents();
+
+    for (const component of selectedComponents) {
+      const handle = component.getHandleAtPosition(startX, startY);
+      if (handle) {
+        return new ScaleCommand(componentManager, handle, dx, dy);
+      }
+    }
+
+    return new MoveCommand(componentManager, dx, dy);
   }
 }
-
 export class LineTool implements ITool {
   readonly type = ToolType.LINE;
   readonly label = "선";
-  readonly icon = "line-icon";
 
-  execute(context: any): void {
-    // 선 그리기 도구 실행 로직
-    console.log("선 도구 활성화");
+  getCommandOnClick({
+    componentManager,
+    x,
+    y,
+  }: {
+    componentManager: ComponentManagerModel;
+    x: number;
+    y: number;
+  }): ICommand {
+    return new CreateLineCommand(componentManager, {
+      x,
+      y,
+      width: 100,
+      height: 100,
+    });
+  }
+
+  getCommandOnDrag({
+    componentManager,
+    startX,
+    startY,
+    endX,
+    endY,
+  }: {
+    componentManager: ComponentManagerModel;
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+  }): ICommand {
+    const width = Math.abs(endX - startX);
+    const height = Math.abs(endY - startY);
+    return new CreateLineCommand(componentManager, {
+      x: startX,
+      y: startY,
+      width,
+      height,
+    });
   }
 }
-
 export class RectangleTool implements ITool {
   readonly type = ToolType.RECTANGLE;
   readonly label = "사각형";
-  readonly icon = "rectangle-icon";
 
-  execute(context: any): void {
-    // 사각형 그리기 도구 실행 로직
-    console.log("사각형 도구 활성화");
+  getCommandOnClick({
+    componentManager,
+    x,
+    y,
+  }: {
+    componentManager: ComponentManagerModel;
+    x: number;
+    y: number;
+  }): ICommand {
+    return new CreateRectangleCommand(componentManager, {
+      x,
+      y,
+      width: 100,
+      height: 100,
+    });
+  }
+
+  getCommandOnDrag({
+    componentManager,
+    startX,
+    startY,
+    endX,
+    endY,
+  }: {
+    componentManager: ComponentManagerModel;
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+  }): ICommand {
+    const width = Math.abs(endX - startX);
+    const height = Math.abs(endY - startY);
+    return new CreateRectangleCommand(componentManager, {
+      x: startX,
+      y: startY,
+      width,
+      height,
+    });
   }
 }
 
 export class EllipseTool implements ITool {
   readonly type = ToolType.ELLIPSE;
   readonly label = "타원";
-  readonly icon = "ellipse-icon";
 
-  execute(context: any): void {
-    // 타원 그리기 도구 실행 로직
-    console.log("타원 도구 활성화");
+  getCommandOnClick({
+    componentManager,
+    x,
+    y,
+  }: {
+    componentManager: ComponentManagerModel;
+    x: number;
+    y: number;
+  }): ICommand {
+    return new CreateEllipseCommand(componentManager, {
+      x,
+      y,
+      width: 100,
+      height: 100,
+    });
+  }
+
+  getCommandOnDrag({
+    componentManager,
+    startX,
+    startY,
+    endX,
+    endY,
+  }: {
+    componentManager: ComponentManagerModel;
+    startX: number;
+    startY: number;
+    endX: number;
+    endY: number;
+  }): ICommand {
+    const width = Math.abs(endX - startX);
+    const height = Math.abs(endY - startY);
+    return new CreateEllipseCommand(componentManager, {
+      x: startX,
+      y: startY,
+      width,
+      height,
+    });
   }
 }
+// export class TextTool implements ITool {
+//   readonly type = ToolType.TEXT;
+//   readonly label = "텍스트";
 
-export class TextTool implements ITool {
-  readonly type = ToolType.TEXT;
-  readonly label = "텍스트";
-  readonly icon = "text-icon";
+//   getCommandOnClick({
+//     componentManager,
+//     x,
+//     y,
+//   }: {
+//     componentManager: ComponentManagerModel;
+//     x: number;
+//     y: number;
+//   }): ICommand {
+//     return new CreateTextCommand(componentManager, { x, y, width: 100, height: 100 });
+//   }
 
-  execute(context: any): void {
-    // 텍스트 도구 실행 로직
-    console.log("텍스트 도구 활성화");
-  }
-}
+//   getCommandOnDrag({
+//     componentManager,
+//     startX,
+//     startY,
+//     endX,
+//     endY,
+//   }: {
+//     componentManager: ComponentManagerModel;
+//     startX: number;
+//     startY: number;
+//     endX: number;
+//     endY: number;
+//   }): ICommand {
+//     return new MoveCommand(componentManager, endX - startX, endY - startY);
+//   }
+// }

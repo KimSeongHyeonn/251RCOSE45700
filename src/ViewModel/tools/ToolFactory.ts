@@ -1,11 +1,5 @@
 import { ITool } from "./ITool";
-import {
-  SelectTool,
-  LineTool,
-  RectangleTool,
-  EllipseTool,
-  TextTool,
-} from "./Tools";
+import { SelectTool, LineTool, RectangleTool, EllipseTool } from "./Tools";
 import { ToolType } from "./ToolType";
 
 export class ToolFactory {
@@ -14,7 +8,7 @@ export class ToolFactory {
     [ToolType.LINE, new LineTool()],
     [ToolType.RECTANGLE, new RectangleTool()],
     [ToolType.ELLIPSE, new EllipseTool()],
-    [ToolType.TEXT, new TextTool()],
+    // [ToolType.TEXT, new TextTool()],
   ]);
 
   public static getTool(type: ToolType): ITool {
