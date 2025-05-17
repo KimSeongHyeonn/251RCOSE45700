@@ -216,23 +216,14 @@ export class ComponentManagerModel implements Observable<null> {
     return this._components.filter((c) => this._selectedIds.has(c.id));
   }
 
-  // 선택된 도형 그리기 위한 DrawableShape 배열 반환
-  public getSelectedDrawables(): DrawableShape[] {
-    const selectedComponents = this.getSelectedComponents();
-    return selectedComponents.flatMap((component) => component.toDrawable());
-  }
-
-  // 선택되지 않은 도형 그리기 위한 DrawableShape 배열 반환
-  public getNonSelectedDrawables(): DrawableShape[] {
-    const nonSelectedComponents = this._components.filter((c) => !this._selectedIds.has(c.id));
-    return nonSelectedComponents.flatMap((component) => component.toDrawable());
-  }
-
   // 모든 도형 그리기 위한 DrawableShape 배열 반환
   public getAllDrawables(): DrawableShape[] {
-    const selectedDrawables = this.getSelectedDrawables();
-    const nonSelectedDrawables = this.getNonSelectedDrawables();
-    return [...selectedDrawables, ...nonSelectedDrawables];
+    return this._components.flatMap((component) => {
+      if (this._selectedIds.has(component.id)) {
+        return new SelectedComponentDecorator(component).toDrawable();
+      }
+      return component.toDrawable();
+    });
   }
 
   // 해당 좌표에 있는 도형 반환

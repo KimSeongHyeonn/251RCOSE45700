@@ -5,14 +5,20 @@ import { IComponent } from "~/Model/interfaces/component.interface";
 export class SelectCommand implements ICommand {
   private manager: ComponentManagerModel;
 
-  private component: IComponent;
+  private component: IComponent | IComponent[];
 
-  constructor(manager: ComponentManagerModel, component: IComponent) {
+  constructor(manager: ComponentManagerModel, component: IComponent);
+  constructor(manager: ComponentManagerModel, components: IComponent[]);
+  constructor(manager: ComponentManagerModel, component: IComponent | IComponent[]) {
     this.manager = manager;
     this.component = component;
   }
 
   public execute(): void {
-    this.manager.selectComponent(this.component);
+    if (Array.isArray(this.component)) {
+      this.manager.selectComponent(this.component);
+    } else {
+      this.manager.selectComponent(this.component);
+    }
   }
 }
