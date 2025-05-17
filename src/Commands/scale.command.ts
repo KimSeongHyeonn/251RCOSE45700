@@ -1,21 +1,22 @@
 import { ICommand } from "~/Commands/interfaces/command.interface";
-import { IComponent } from "~/Model/interfaces/component.interface";
+import { ComponentManagerModel } from "~/Model/component-manager";
+import { HandlePosition } from "~/Model/decorators/selected-component.decorator";
 
 export class ScaleCommand implements ICommand {
-  private component: IComponent;
-  private width: number;
-  private height: number;
+  private manager: ComponentManagerModel;
 
-  constructor(component: IComponent, width: number, height: number) {
-    if (width <= 0 || height <= 0) {
-      throw new Error("Invalid width or height");
-    }
-    this.component = component;
-    this.width = width;
-    this.height = height;
+  private handle: HandlePosition;
+  private dx: number;
+  private dy: number;
+
+  constructor(manager: ComponentManagerModel, handle: HandlePosition, dx: number, dy: number) {
+    this.manager = manager;
+    this.handle = handle;
+    this.dx = dx;
+    this.dy = dy;
   }
 
   public execute(): void {
-    this.component.scale({ width: this.width, height: this.height });
+    this.manager.scaleSelectedComponents({ handlePosition: this.handle, dx: this.dx, dy: this.dy });
   }
 }

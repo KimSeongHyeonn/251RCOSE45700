@@ -3,17 +3,18 @@ import { ComponentManagerModel } from "~/Model/component-manager";
 import { Rectangle } from "~/Model/objects/rectangle.object";
 
 export class CreateRectangleCommand implements ICommand {
+  private manager: ComponentManagerModel;
+
   private props: {
     x: number;
     y: number;
     width: number;
     height: number;
   };
-  private manager: ComponentManagerModel;
 
-  constructor(props: { x: number; y: number; width: number; height: number }, manager: ComponentManagerModel) {
-    this.props = props;
+  constructor(manager: ComponentManagerModel, props: { x: number; y: number; width: number; height: number }) {
     this.manager = manager;
+    this.props = props;
   }
 
   public execute(): void {

@@ -1,5 +1,6 @@
 import { ICommand } from "~/Commands/interfaces/command.interface";
 import { ComponentManagerModel } from "~/Model/component-manager";
+
 export class MoveCommand implements ICommand {
   private manager: ComponentManagerModel;
 
@@ -13,7 +14,6 @@ export class MoveCommand implements ICommand {
   }
 
   public execute(): void {
-    const selectedComponents = this.manager.getSelectedComponents();
-    selectedComponents.move({ dx: this.dx, dy: this.dy });
+    this.manager.moveSelectedComponents({ dx: this.dx, dy: this.dy });
   }
 }
