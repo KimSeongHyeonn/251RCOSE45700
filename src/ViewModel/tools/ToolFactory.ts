@@ -1,5 +1,10 @@
 import { ITool } from "./ITool";
-import { SelectTool, LineTool, RectangleTool, EllipseTool } from "./Tools";
+import {
+  SelectTool,
+  LineTool,
+  RectangleTool,
+  EllipseTool,
+} from "./ToolStrategy";
 import { ToolType } from "./ToolType";
 
 export class ToolFactory {
