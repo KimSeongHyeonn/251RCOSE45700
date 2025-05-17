@@ -105,8 +105,8 @@ export class ComponentManagerModel implements Observable<null> {
         dy: posY ? posY - component.posY : 0,
       });
       component.scale({
-        width: width ? width - component.width : component.width,
-        height: height ? height - component.height : component.height,
+        width: width ? width : component.width,
+        height: height ? height : component.height,
       });
     });
 
