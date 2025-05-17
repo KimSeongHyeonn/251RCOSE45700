@@ -23,19 +23,25 @@ export class ComponentManagerModel {
   }
 
   public removeSelectedComponents(): void {
-    this._components = this._components.filter((component) => !this._selectedIds.has(component.id));
+    this._components = this._components.filter(
+      (component) => !this._selectedIds.has(component.id)
+    );
     this._selectedIds.clear();
   }
 
   public groupSelectedComponents(): Group | null {
-    const selectedComponents = this._components.filter((c) => this._selectedIds.has(c.id));
+    const selectedComponents = this._components.filter((c) =>
+      this._selectedIds.has(c.id)
+    );
 
     if (selectedComponents.length <= 1) {
       return null;
     }
 
     const newGroup = new Group({ components: selectedComponents });
-    this._components = this._components.filter((c) => !this._selectedIds.has(c.id));
+    this._components = this._components.filter(
+      (c) => !this._selectedIds.has(c.id)
+    );
     this._components.push(newGroup);
 
     this._selectedIds.clear();
@@ -135,7 +141,7 @@ export class ComponentManagerModel {
     return new SelectedComponentDecorator(
       new Group({
         components: this._components.filter((c) => this._selectedIds.has(c.id)),
-      }),
+      })
     );
   }
 
@@ -164,5 +170,13 @@ export class ComponentManagerModel {
       }
     }
     return null;
+  }
+
+  /**
+   * 모든 컴포넌트를 배열로 반환합니다.
+   * @returns 모든 컴포넌트 배열
+   */
+  public getAllComponents(): IComponent[] {
+    return [...this._components];
   }
 }

@@ -2,8 +2,7 @@ import { CanvasView } from "./View/canvasView";
 import { ToolbarView } from "./View/toolbarView";
 import { PropertiesPanelView } from "./View/propertiesPanelView";
 import { CanvasViewModel } from "./ViewModel/canvasViewModel";
-import { ToolbarViewModel } from "./ViewModel/toolbarViewModel";
-import { PropertiesPanelViewModel } from "./ViewModel/propertiesPanelViewModel";
+import { ToolType } from "./Model/tools/ToolType";
 
 function initializeApp() {
   // 전체 에디터 컨테이너 생성
@@ -42,24 +41,20 @@ function initializeApp() {
   // 초기 렌더링
   //viewModel.initialize();
   // 초기 렌더링 (예시로 몇 개의 컴포넌트 추가)
-  canvasViewModel.createComponent({ type: "rectangle", x: 100, y: 100 });
-  canvasViewModel.createComponent({ type: "ellipse", x: 200, y: 200 });
-  canvasViewModel.createComponent({ type: "line", x: 300, y: 300 });
-  const toolbarViewModel = new ToolbarViewModel();
-  const propertiesPanelViewModel = new PropertiesPanelViewModel({
-    testComponent: canvasViewModel.getComponents()[0],
-  });
+  canvasViewModel.createComponent({ type: ToolType.RECTANGLE, x: 100, y: 100 });
+  canvasViewModel.createComponent({ type: ToolType.ELLIPSE, x: 200, y: 200 });
+  canvasViewModel.createComponent({ type: ToolType.LINE, x: 300, y: 300 });
 
   // 각 View 생성
-  const toolbarView = new ToolbarView(toolbarContainer, toolbarViewModel);
+  const toolbarView = new ToolbarView(toolbarContainer, canvasViewModel);
   const canvasView = new CanvasView(canvasContainer, 800, 600, canvasViewModel);
   const propertiesPanelView = new PropertiesPanelView(
     propertiesContainer,
-    propertiesPanelViewModel
+    canvasViewModel
   );
 
   canvasView.render(canvasViewModel.getComponents());
-  toolbarView.render(toolbarViewModel.getAllTools());
+  toolbarView.render(canvasViewModel.getAllTools());
   propertiesPanelView.render();
 }
 

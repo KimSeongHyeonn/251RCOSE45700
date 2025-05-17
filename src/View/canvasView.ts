@@ -1,5 +1,5 @@
 import { IComponent } from "~/Model/interfaces/component.interface";
-import { CanvasViewModel } from "~/ViewModel/canvasViewModel";
+import { CanvasViewModel, ToolType } from "~/ViewModel/canvasViewModel";
 import { Drawer } from "~/ViewModel/drawer";
 
 export class CanvasView {
@@ -24,16 +24,57 @@ export class CanvasView {
     this.viewModel = viewModel;
 
     this.initEventListeners();
-    this.viewModel.registerView(this);
+    this.viewModel.registerCanvasView(this);
 
     this.drawer = new Drawer(this.ctx);
   }
+
+  /**
+   * 마우스 이벤트에서 캔버스 상의 좌표를 계산합니다.
+   * @param e 마우스 이벤트
+   * @returns 캔버스 내의 x, y 좌표
+   */
+  private getCanvasCoordinates(e: MouseEvent): { x: number; y: number } {
+    const rect = this.canvas.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    };
+  }
+
   private initEventListeners(): void {
+    // 마우스 다운 이벤트 - 객체 선택
     this.canvas.addEventListener("mousedown", (e) => {
-      const rect = this.canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      const { x, y } = this.getCanvasCoordinates(e);
       this.viewModel.selectComponentAt(x, y, e.ctrlKey);
+    });
+
+    // 클릭 이벤트 - 현재 선택된 도구에 따라 컴포넌트 생성
+    this.canvas.addEventListener("click", (e) => {
+      const { x, y } = this.getCanvasCoordinates(e);
+      const currentTool = this.viewModel.getCurrentTool();
+      if (currentTool && currentTool.type === ToolType.SELECT) {
+        this.viewModel.selectComponentAt(x, y, e.ctrlKey);
+      }
+      if (currentTool && currentTool.type !== ToolType.SELECT) {
+        this.viewModel.createComponent({
+          type: currentTool.type,
+          x: x,
+          y: y,
+        });
+      }
+    });
+
+    // 마우스 이동 이벤트 - 드래그 처리 등을 위해 필요할 경우
+    this.canvas.addEventListener("mousemove", (e) => {
+      const { x, y } = this.getCanvasCoordinates(e);
+      // 필요한 경우 여기에 드래그 로직 추가
+    });
+
+    // 마우스 업 이벤트 - 드래그 종료 등을 위해 필요할 경우
+    this.canvas.addEventListener("mouseup", (e) => {
+      const { x, y } = this.getCanvasCoordinates(e);
+      // 필요한 경우 여기에 드래그 완료 로직 추가
     });
   }
 

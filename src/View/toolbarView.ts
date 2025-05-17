@@ -1,17 +1,17 @@
-import { ToolbarViewModel } from "~/ViewModel/toolbarViewModel";
 import { ToolType } from "~/Model/tools/ToolType";
 import { ITool } from "~/Model/tools/ITool";
-
+import { CanvasViewModel } from "~/ViewModel/canvasViewModel";
 export class ToolbarView {
   private toolbar: HTMLElement;
-  private viewModel: ToolbarViewModel;
+  private viewModel: CanvasViewModel;
   private buttons: Map<ToolType, HTMLButtonElement> = new Map();
 
-  constructor(toolbar: HTMLElement, viewModel: ToolbarViewModel) {
+  constructor(toolbar: HTMLElement, viewModel: CanvasViewModel) {
     this.toolbar = toolbar;
     this.viewModel = viewModel;
+
     this.createToolbar();
-    this.viewModel.registerView(this);
+    this.viewModel.registerToolbarView(this);
   }
 
   private createToolbar(): void {
@@ -20,34 +20,22 @@ export class ToolbarView {
     this.toolbar.style.flexDirection = "column";
     this.toolbar.style.padding = "10px";
     this.toolbar.style.backgroundColor = "#f0f0f0";
-    this.toolbar.style.borderBottom = "1px solid #ddd";
     this.toolbar.style.minHeight = "40px";
+    this.toolbar.style.gap = "10px";
+    this.toolbar.style.justifyContent = "center";
 
     const tools = this.viewModel.getAllTools();
 
     tools.forEach((tool) => {
-      this.createToolButton(tool.type, tool.label, tool.icon);
+      this.createToolButton(tool.type, tool.label);
     });
   }
 
-  private createToolButton(
-    toolType: ToolType,
-    label: string,
-    iconClass?: string
-  ): void {
+  private createToolButton(toolType: ToolType, label: string): void {
     const button = document.createElement("button");
 
     button.style.width = "100px";
     button.style.height = "100px";
-    button.style.border = "1px solid #ccc";
-    button.style.borderRadius = "3px";
-    button.style.backgroundColor = "#fff";
-
-    if (iconClass) {
-      const icon = document.createElement("span");
-      icon.className = iconClass;
-      button.appendChild(icon);
-    }
 
     const labelSpan = document.createElement("span");
     labelSpan.textContent = label;
@@ -78,8 +66,16 @@ export class ToolbarView {
 
   public render(tools: ITool[]): void {
     this.toolbar.innerHTML = "";
+    this.buttons.clear();
+
     tools.forEach((tool) => {
-      this.createToolButton(tool.type, tool.label, tool.icon);
+      this.createToolButton(tool.type, tool.label);
     });
+
+    // 현재 선택된 도구 상태를 반영
+    const currentTool = this.viewModel.getCurrentTool();
+    if (currentTool) {
+      this.updateSelectedTool(currentTool.type);
+    }
   }
 }
