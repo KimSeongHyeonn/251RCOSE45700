@@ -2,7 +2,7 @@ import { CanvasView } from "./View/canvasView";
 import { ToolbarView } from "./View/toolbarView";
 import { PropertiesPanelView } from "./View/propertiesPanelView";
 import { CanvasViewModel } from "./ViewModel/canvasViewModel";
-import { ToolType } from "./Model/tools/ToolType";
+import { ToolType } from "./ViewModel/tools/ToolType";
 
 function initializeApp() {
   // 전체 에디터 컨테이너 생성
@@ -36,26 +36,16 @@ function initializeApp() {
 
   // ViewModel 생성
   const canvasViewModel = new CanvasViewModel();
-  // ViewModel 간 연결
-
-  // 초기 렌더링
-  //viewModel.initialize();
-  // 초기 렌더링 (예시로 몇 개의 컴포넌트 추가)
-  canvasViewModel.createComponent({ type: ToolType.RECTANGLE, x: 100, y: 100 });
-  canvasViewModel.createComponent({ type: ToolType.ELLIPSE, x: 200, y: 200 });
-  canvasViewModel.createComponent({ type: ToolType.LINE, x: 300, y: 300 });
 
   // 각 View 생성
   const toolbarView = new ToolbarView(toolbarContainer, canvasViewModel);
   const canvasView = new CanvasView(canvasContainer, 800, 600, canvasViewModel);
-  const propertiesPanelView = new PropertiesPanelView(
-    propertiesContainer,
-    canvasViewModel
-  );
+  // const propertiesPanelView = new PropertiesPanelView(
+  //   propertiesContainer,
+  //   canvasViewModel
+  // );
 
-  canvasView.render(canvasViewModel.getComponents());
-  toolbarView.render(canvasViewModel.getAllTools());
-  propertiesPanelView.render();
+  canvasViewModel.render();
 }
 
 // 페이지 로드 시 초기화

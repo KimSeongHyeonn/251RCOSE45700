@@ -1,5 +1,5 @@
-import { ToolType } from "~/Model/tools/ToolType";
-import { ITool } from "~/Model/tools/ITool";
+import { ToolType } from "~/ViewModel/tools/ToolType";
+import { ITool } from "~/ViewModel/tools/ITool";
 import { CanvasViewModel } from "~/ViewModel/canvasViewModel";
 export class ToolbarView {
   private toolbar: HTMLElement;
