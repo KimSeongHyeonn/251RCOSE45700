@@ -13,7 +13,6 @@ export class ToolFactory {
     [ToolType.LINE, new LineTool()],
     [ToolType.RECTANGLE, new RectangleTool()],
     [ToolType.ELLIPSE, new EllipseTool()],
-    // [ToolType.TEXT, new TextTool()],
   ]);
 
   public static getTool(type: ToolType): ITool {

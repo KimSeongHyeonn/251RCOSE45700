@@ -190,35 +190,3 @@ export class EllipseTool implements ITool {
     });
   }
 }
-// export class TextTool implements ITool {
-//   readonly type = ToolType.TEXT;
-//   readonly label = "텍스트";
-
-//   getCommandOnClick({
-//     componentManager,
-//     x,
-//     y,
-//   }: {
-//     componentManager: ComponentManagerModel;
-//     x: number;
-//     y: number;
-//   }): ICommand {
-//     return new CreateTextCommand(componentManager, { x, y, width: 100, height: 100 });
-//   }
-
-//   getCommandOnDrag({
-//     componentManager,
-//     startX,
-//     startY,
-//     endX,
-//     endY,
-//   }: {
-//     componentManager: ComponentManagerModel;
-//     startX: number;
-//     startY: number;
-//     endX: number;
-//     endY: number;
-//   }): ICommand {
-//     return new MoveCommand(componentManager, endX - startX, endY - startY);
-//   }
-// }
