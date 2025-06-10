@@ -1,83 +1,65 @@
 import { IComponent } from "~/Model/interfaces/component.interface";
-import { DrawableShape } from "~/Model/interfaces/drawable-shape.interface";
+import { Bound, ComponentType, Position, Style } from "~/Model/types/component.type";
 import { IdGenerator } from "~/Utils/id-generator";
 
 export abstract class Component implements IComponent {
   private _id: number;
-  private _posX: number;
-  private _posY: number;
-  private _width: number;
-  private _height: number;
-  private _fillStyle: string;
-  private _strokeStyle: string;
-  private _lineWidth: number;
-  private _lineDash: number[];
+  private _bound: Bound;
+  private _style: Style;
 
+  // 기본 채우기 색상 옵션
   private readonly DefaultFillStyles = ["#DDEEFF", "#DFFFE0", "#FFE5D9", "#EBDFFC"];
 
   constructor({ posX = 0, posY = 0, width = 100, height = 100 }: { posX?: number; posY?: number; width?: number; height?: number }) {
     this._id = IdGenerator.getInstance().generateId();
-    this._posX = posX;
-    this._posY = posY;
-    this._width = width;
-    this._height = height;
-    this._fillStyle = this.DefaultFillStyles[Math.floor(Math.random() * this.DefaultFillStyles.length)]; // 기본 채우기 색상: 랜덤
-    this._strokeStyle = "#000000"; // 기본 선 색상: 검정색
-    this._lineWidth = 1;
-    this._lineDash = [0, 0]; // 기본 선 스타일: 실선
+    this._bound = {
+      x: posX,
+      y: posY,
+      width: width,
+      height: height,
+    };
+    this._style = {
+      fillStyle: this.DefaultFillStyles[Math.floor(Math.random() * this.DefaultFillStyles.length)], // 기본 채우기 색상: 랜덤
+      strokeStyle: "#000000", // 기본 선 색상: 검정색
+      lineWidth: 1,
+      lineDash: [0, 0], // 기본 선 스타일: 실선
+    };
   }
-
-  public abstract toDrawable(): DrawableShape[];
-
-  public move({ dx, dy }: { dx: number; dy: number }): void {
-    this._posX += dx;
-    this._posY += dy;
-  }
-
-  public scale({ width, height }: { width: number; height: number }): void {
-    this._width = width;
-    this._height = height;
-  }
-
-  public isContainPoint({ x, y }: { x: number; y: number }): boolean {
-    return x >= this._posX && x <= this._posX + this._width && y >= this._posY && y <= this._posY + this._height;
-  }
-
-  public abstract get type(): string;
 
   public get id(): number {
     return this._id;
   }
 
-  public get posX(): number {
-    return this._posX;
+  public abstract get type(): ComponentType;
+
+  public get bound(): Bound {
+    return this._bound;
   }
 
-  public get posY(): number {
-    return this._posY;
+  public get style(): Style {
+    return this._style;
   }
 
-  public get width(): number {
-    return this._width;
+  public move({ dx, dy }: { dx: number; dy: number }): void {
+    this._bound.x += dx;
+    this._bound.y += dy;
   }
 
-  public get height(): number {
-    return this._height;
+  public scale({ sx, sy }: { sx: number; sy: number }): void {
+    this._bound.width *= sx;
+    this._bound.height *= sy;
   }
 
-  public get fillStyle(): string {
-    return this._fillStyle;
+  public setProperties(properties: Partial<Bound>): void {
+    if (properties.x !== undefined) this._bound.x = properties.x;
+    if (properties.y !== undefined) this._bound.y = properties.y;
+    if (properties.width !== undefined) this._bound.width = properties.width;
+    if (properties.height !== undefined) this._bound.height = properties.height;
   }
 
-  public get strokeStyle(): string {
-    return this._strokeStyle;
-  }
-
-  public get lineWidth(): number {
-    return this._lineWidth;
-  }
-
-  public get lineDash(): number[] {
-    return this._lineDash;
+  public isContainPoint(point: Position): boolean {
+    return (
+      point.x >= this._bound.x && point.x <= this._bound.x + this._bound.width && point.y >= this._bound.y && point.y <= this._bound.y + this._bound.height
+    );
   }
 }
