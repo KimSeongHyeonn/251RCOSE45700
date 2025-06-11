@@ -2,9 +2,17 @@ import { EditorState } from "~/ViewModel/editor-state";
 import { Subscriber } from "~/Utils/subscriber.interface";
 import { ToolType } from "~/ViewModel/tools/types/tool.type";
 
+interface ZOrderButtons {
+  bringToFront: HTMLElement;
+  bringForward: HTMLElement;
+  sendBackward: HTMLElement;
+  sendToBack: HTMLElement;
+}
+
 export class ToolbarView implements Subscriber<null> {
   private editorState: EditorState;
   private toolButtons: Record<ToolType, HTMLElement>;
+  private zOrderButtons: ZOrderButtons;
 
   constructor() {
     this.editorState = EditorState.getInstance();
@@ -20,8 +28,16 @@ export class ToolbarView implements Subscriber<null> {
       delete: document.getElementById("delete-tool") as HTMLElement,
     };
 
+    this.zOrderButtons = {
+      bringToFront: document.getElementById("bring-to-front-tool") as HTMLElement,
+      bringForward: document.getElementById("bring-forward-tool") as HTMLElement,
+      sendBackward: document.getElementById("send-backward-tool") as HTMLElement,
+      sendToBack: document.getElementById("send-to-back-tool") as HTMLElement,
+    };
+
     // 버튼 이벤트 리스너 설정
     this.setupEventListeners();
+    this.setupZOrderEventListeners();
 
     // EditorState 구독
     this.editorState.subscribe(this);
@@ -44,6 +60,60 @@ export class ToolbarView implements Subscriber<null> {
     if (this.toolButtons[activeTool]) {
       this.toolButtons[activeTool].classList.add("active");
     }
+
+    // 그룹화/그룹해제 버튼 상태 업데이트
+    this.updateActionButtonsState();
+
+    this.updateZOrderButtonsState();
+  }
+
+  // 그룹화/그룹해제 버튼 상태 업데이트 메서드 추가
+  private updateActionButtonsState(): void {
+    // 그룹화 버튼 상태 업데이트
+    const isGroupable = this.editorState.isGroupable();
+    this.updateButtonState(this.toolButtons.group, isGroupable);
+
+    // 그룹해제 버튼 상태 업데이트
+    const isUngroupable = this.editorState.isUngroupable();
+    this.updateButtonState(this.toolButtons.ungroup, isUngroupable);
+  }
+
+  // 버튼 상태 업데이트 헬퍼 메서드
+  private updateButtonState(button: HTMLElement, isEnabled: boolean): void {
+    if (isEnabled) {
+      button.removeAttribute("disabled");
+      button.classList.remove("disabled");
+    } else {
+      button.setAttribute("disabled", "true");
+      button.classList.add("disabled");
+    }
+  }
+
+  private setupZOrderEventListeners(): void {
+    this.zOrderButtons.bringToFront.addEventListener("click", () => {
+      this.editorState.bringToFront();
+    });
+
+    this.zOrderButtons.bringForward.addEventListener("click", () => {
+      this.editorState.bringForward();
+    });
+
+    this.zOrderButtons.sendBackward.addEventListener("click", () => {
+      this.editorState.sendBackward();
+    });
+
+    this.zOrderButtons.sendToBack.addEventListener("click", () => {
+      this.editorState.sendToBack();
+    });
+  }
+
+  private updateZOrderButtonsState(): void {
+    const isZOrderChangeable = this.editorState.isZOrderChangeable();
+
+    // 모든 Z-order 버튼의 활성화/비활성화 상태 업데이트
+    Object.values(this.zOrderButtons).forEach((button) => {
+      this.updateButtonState(button, isZOrderChangeable);
+    });
   }
 
   private setupEventListeners(): void {
