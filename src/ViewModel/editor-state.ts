@@ -17,6 +17,10 @@ import { SetComponentPropertiesCommand } from "~/Commands/update/set-component-p
 import { Bound } from "~/Model/types/component.type";
 import { ToolType } from "~/ViewModel/tools/types/tool.type";
 import { ScaleComponentsByHandleCommand } from "~/Commands/update/scale-components-by-handle.command";
+import { BringToFrontCommand } from "~/Commands/z-order/bring-to-front.command";
+import { SendToBackCommand } from "~/Commands/z-order/send-to-back.command";
+import { BringForwardCommand } from "~/Commands/z-order/bring-forward.command";
+import { SendBackwardCommand } from "~/Commands/z-order/send-backward.command";
 
 export class EditorState implements Observable<null>, Subscriber<null> {
   private static instance: EditorState;
@@ -175,6 +179,11 @@ export class EditorState implements Observable<null>, Subscriber<null> {
     this.commandInvoker.executeCommand(command);
   }
 
+  public isGroupable(): boolean {
+    // 그룹화 가능한지 확인 (선택된 컴포넌트가 2개 이상인지)
+    return this._selectedIds.length >= 2;
+  }
+
   // 선택된 그룹 해제
   public ungroupSelected(): void {
     if (this._selectedIds.length !== 1) return;
@@ -189,6 +198,50 @@ export class EditorState implements Observable<null>, Subscriber<null> {
       this._selectedIds = [];
       this.selectedComponents.clear();
     }
+  }
+
+  public isUngroupable(): boolean {
+    // 선택된 컴포넌트가 그룹화 가능한지 확인
+    if (this._selectedIds.length !== 1) return false;
+
+    const componentId = this._selectedIds[0];
+    const component = this.componentManager.findComponentById(componentId);
+    return component ? component.type === "group" : false;
+  }
+
+  // 선택된 컴포넌트 맨앞으로
+  public bringToFront(): void {
+    if (this._selectedIds.length !== 1) return;
+
+    const command = new BringToFrontCommand(this.componentManager, this._selectedIds[0]);
+    this.commandInvoker.executeCommand(command);
+  }
+
+  // 선택된 컴포넌트 한칸 앞으로
+  public bringForward(): void {
+    if (this._selectedIds.length !== 1) return;
+
+    const command = new BringForwardCommand(this.componentManager, this._selectedIds[0]);
+    this.commandInvoker.executeCommand(command);
+  }
+
+  // 선택된 컴포넌트 맨뒤로
+  public sendToBack(): void {
+    if (this._selectedIds.length !== 1) return;
+    const command = new SendToBackCommand(this.componentManager, this._selectedIds[0]);
+    this.commandInvoker.executeCommand(command);
+  }
+
+  // 선택된 컴포넌트 한칸 뒤로
+  public sendBackward(): void {
+    if (this._selectedIds.length !== 1) return;
+    const command = new SendBackwardCommand(this.componentManager, this._selectedIds[0]);
+    this.commandInvoker.executeCommand(command);
+  }
+
+  public isZOrderChangeable(): boolean {
+    // Z-Order 변경 가능한지 확인 (선택된 컴포넌트가 1개인지)
+    return this._selectedIds.length === 1;
   }
 
   // 사각형 생성
