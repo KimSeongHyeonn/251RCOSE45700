@@ -1,3 +1,4 @@
+import { HandlePosition, SelectedComponentDecorator } from "~/Model/decorators/selected-component.decorator";
 import { IComponent } from "~/Model/interfaces/component.interface";
 import { Group } from "~/Model/objects/group.object";
 import { Bound } from "~/Model/types/component.type";
@@ -84,6 +85,24 @@ export class ComponentManager implements Observable<null> {
       const component = this.getValidComponent(componentId);
 
       component.scale({ sx, sy });
+    }
+
+    this.notify();
+  }
+
+  public scaleByHandle(componentId: number, handle: HandlePosition, dx: number, dy: number): void;
+  public scaleByHandle(componentIds: number[], handle: HandlePosition, dx: number, dy: number): void;
+  public scaleByHandle(componentId: number | number[], handle: HandlePosition, dx: number, dy: number): void {
+    if (Array.isArray(componentId)) {
+      const validComponents = this.getValidComponents(componentId);
+
+      for (const component of validComponents) {
+        new SelectedComponentDecorator(component).scaleByHandle(handle, dx, dy);
+      }
+    } else {
+      const component = this.getValidComponent(componentId);
+
+      new SelectedComponentDecorator(component).scaleByHandle(handle, dx, dy);
     }
 
     this.notify();
