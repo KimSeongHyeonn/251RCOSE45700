@@ -83,17 +83,16 @@ export class SelectTool implements ITool {
     this.hasMoved = true;
 
     editorState.applyTemporaryChange(() => {
+      const selectedComponents = Array.from(this.originalBounds.keys());
       if (this.isResizing) {
         // 리사이즈 처리 - 임시로 시각적 변화만 처리
-        const selectedComponents = this.originalBounds.keys();
         for (const component of selectedComponents) {
-          if (this.resizingHandle) {
+          if (this.resizingHandle !== null) {
             component.scaleByHandle(this.resizingHandle, dx, dy);
           }
         }
       } else if (this.isDragging) {
         // 드래그 처리 - 임시로 시각적 변화만 처리
-        const selectedComponents = editorState.getSelectedComponents();
         for (const component of selectedComponents) {
           component.move({ dx, dy });
         }
@@ -130,7 +129,7 @@ export class SelectTool implements ITool {
     const totalDeltaY = this.lastY - this.startY;
 
     if (Math.abs(totalDeltaX) > this.THRESHOLD || Math.abs(totalDeltaY) > this.THRESHOLD) {
-      if (this.isResizing && this.resizingHandle) {
+      if (this.isResizing && this.resizingHandle !== null) {
         editorState.scaleSelectedByHandle(this.resizingHandle, totalDeltaX, totalDeltaY);
 
         this.isResizing = false;

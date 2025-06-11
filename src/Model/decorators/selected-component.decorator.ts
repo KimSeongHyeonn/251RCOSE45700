@@ -1,5 +1,6 @@
 import { ComponentDecorator } from "~/Model/decorators/component.decorator";
 import { IComponent } from "~/Model/interfaces/component.interface";
+import { Bound } from "~/Model/types/component.type";
 
 export class SelectedComponentDecorator extends ComponentDecorator {
   private readonly HANDLE_SIZE: number = 6;
@@ -93,7 +94,7 @@ export class SelectedComponentDecorator extends ComponentDecorator {
     this.updateHandlePositions();
   }
 
-  public setProperties(properties: Partial<any>): void {
+  public setProperties(properties: Partial<Bound>): void {
     super.setProperties(properties);
     this.updateHandlePositions();
   }
