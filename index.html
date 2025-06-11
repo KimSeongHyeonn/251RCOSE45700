@@ -3,18 +3,77 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>벡터 그래픽 에디터</title>
-    <style>
-      #canvas-container {
-        border: 1px solid #000;
-        margin: 20px;
-      }
-      canvas {
-        display: block;
-      }
-    </style>
+    <title>백터 그래픽 에디터</title>
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <script type="module" src="/src/main.ts"></script>
+    <div class="editor-container">
+      <!-- 툴바 영역 -->
+      <div class="toolbar">
+        <div class="tool-group">
+          <button id="select-tool" class="tool-button active" title="선택 도구">
+            <span class="icon">⛏</span>
+          </button>
+          <button id="rectangle-tool" class="tool-button" title="사각형 도구">
+            <span class="icon">□</span>
+          </button>
+          <button id="ellipse-tool" class="tool-button" title="타원 도구">
+            <span class="icon">○</span>
+          </button>
+          <button id="line-tool" class="tool-button" title="선 도구">
+            <span class="icon">⟋</span>
+          </button>
+        </div>
+
+        <div class="tool-group">
+          <button id="group-tool" class="tool-button" title="그룹화">
+            <span class="icon">⊞</span>
+          </button>
+          <button id="ungroup-tool" class="tool-button" title="그룹 해제">
+            <span class="icon">⊟</span>
+          </button>
+          <button id="delete-tool" class="tool-button" title="삭제">
+            <span class="icon">🗑️</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 메인 에디터 영역 -->
+      <div class="editor-main">
+        <!-- 캔버스 영역 -->
+        <div class="canvas-container">
+          <canvas id="editor-canvas"></canvas>
+        </div>
+
+        <!-- 속성 패널 -->
+        <div class="properties-panel">
+          <h3>속성</h3>
+          <div id="no-selection" class="property-section">
+            <p>선택된 도형이 없습니다.</p>
+          </div>
+
+          <div id="component-properties" class="property-section" style="display: none">
+            <div class="property-row">
+              <label for="prop-x">X:</label>
+              <input type="number" id="prop-x" class="property-input" />
+            </div>
+            <div class="property-row">
+              <label for="prop-y">Y:</label>
+              <input type="number" id="prop-y" class="property-input" />
+            </div>
+            <div class="property-row">
+              <label for="prop-width">너비:</label>
+              <input type="number" id="prop-width" class="property-input" />
+            </div>
+            <div class="property-row">
+              <label for="prop-height">높이:</label>
+              <input type="number" id="prop-height" class="property-input" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.ts"></script>
   </body>
 </html>

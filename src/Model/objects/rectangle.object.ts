@@ -1,28 +1,12 @@
-import { DrawableRectangle } from "~/Model/interfaces/drawable-shape.interface";
 import { Component } from "~/Model/objects/component.object";
+import { ComponentType } from "~/Model/types/component.type";
 
 export class Rectangle extends Component {
   constructor({ posX, posY, width, height }: { posX?: number; posY?: number; width?: number; height?: number }) {
     super({ posX, posY, width, height });
   }
 
-  public toDrawable(): DrawableRectangle[] {
-    return [
-      {
-        type: "rectangle",
-        x: this.posX,
-        y: this.posY,
-        width: this.width,
-        height: this.height,
-        fillStyle: this.fillStyle,
-        strokeStyle: this.strokeStyle,
-        lineWidth: this.lineWidth,
-        lineDash: this.lineDash,
-      },
-    ];
-  }
-
-  public get type(): string {
+  public get type(): ComponentType {
     return "rectangle";
   }
 }

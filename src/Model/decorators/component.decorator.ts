@@ -1,5 +1,5 @@
 import { IComponent } from "~/Model/interfaces/component.interface";
-import { DrawableShape } from "~/Model/interfaces/drawable-shape.interface";
+import { Bound, ComponentType } from "~/Model/types/component.type";
 
 export abstract class ComponentDecorator implements IComponent {
   protected component: IComponent;
@@ -8,14 +8,16 @@ export abstract class ComponentDecorator implements IComponent {
     this.component = component;
   }
 
-  public abstract toDrawable(): DrawableShape[];
-
   public move({ dx, dy }: { dx: number; dy: number }): void {
     this.component.move({ dx, dy });
   }
 
-  public scale({ width, height }: { width: number; height: number }): void {
-    this.component.scale({ width, height });
+  public scale({ sx, sy }: { sx: number; sy: number }): void {
+    this.component.scale({ sx, sy });
+  }
+
+  public setProperties(properties: Partial<Bound>): void {
+    this.component.setProperties(properties);
   }
 
   public isContainPoint({ x, y }: { x: number; y: number }): boolean {
@@ -26,23 +28,15 @@ export abstract class ComponentDecorator implements IComponent {
     return this.component.id;
   }
 
-  public get type(): string {
+  public get type(): ComponentType {
     return this.component.type;
   }
 
-  public get posX(): number {
-    return this.component.posX;
+  public get bound() {
+    return this.component.bound;
   }
 
-  public get posY(): number {
-    return this.component.posY;
-  }
-
-  public get width(): number {
-    return this.component.width;
-  }
-
-  public get height(): number {
-    return this.component.height;
+  public get style() {
+    return this.component.style;
   }
 }

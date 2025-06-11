@@ -1,6 +1,5 @@
 import { ComponentDecorator } from "~/Model/decorators/component.decorator";
 import { IComponent } from "~/Model/interfaces/component.interface";
-import { DrawableShape } from "~/Model/interfaces/drawable-shape.interface";
 
 export class SelectedComponentDecorator extends ComponentDecorator {
   private readonly HANDLE_SIZE: number = 6;
@@ -11,35 +10,13 @@ export class SelectedComponentDecorator extends ComponentDecorator {
     this.updateHandlePositions();
   }
 
-  public toDrawable(): DrawableShape[] {
-    this.updateHandlePositions();
-    return [
-      ...this.component.toDrawable(),
-      {
-        type: "rectangle",
-        x: this.component.posX,
-        y: this.component.posY,
-        width: this.component.width,
-        height: this.component.height,
-        strokeStyle: "#000000", // Selection border color
-        lineWidth: 0.8,
-        lineDash: [4, 2], // Dashed line
-      },
-      ...this.toDrawableResizeHandlers(),
-    ];
-  }
-
-  private toDrawableResizeHandlers(): DrawableShape[] {
-    return this.handles.map((handle) => handle.toDrawable()).flat();
-  }
-
   private updateHandlePositions(): void {
     this.handles = [];
 
-    const x = this.component.posX;
-    const y = this.component.posY;
-    const w = this.component.width;
-    const h = this.component.height;
+    const x = this.component.bound.x;
+    const y = this.component.bound.y;
+    const w = this.component.bound.width;
+    const h = this.component.bound.height;
 
     const positions = [
       { pos: HandlePosition.TOP_LEFT, x: x, y: y },
@@ -67,41 +44,57 @@ export class SelectedComponentDecorator extends ComponentDecorator {
   }
 
   public scaleByHandle(handlePos: HandlePosition, dx: number, dy: number): void {
-    const w = this.component.width;
-    const h = this.component.height;
+    const w = this.component.bound.width;
+    const h = this.component.bound.height;
 
     switch (handlePos) {
       case HandlePosition.TOP_LEFT:
         this.component.move({ dx, dy });
-        this.component.scale({ width: w - dx, height: h - dy });
+        this.setProperties({ width: w - dx, height: h - dy });
         break;
       case HandlePosition.TOP_MIDDLE:
         this.component.move({ dx: 0, dy });
-        this.component.scale({ width: w, height: h - dy });
+        this.setProperties({ width: w, height: h - dy });
         break;
       case HandlePosition.TOP_RIGHT:
         this.component.move({ dx: 0, dy });
-        this.component.scale({ width: w + dx, height: h - dy });
+        this.setProperties({ width: w + dx, height: h - dy });
         break;
       case HandlePosition.MIDDLE_LEFT:
         this.component.move({ dx, dy: 0 });
-        this.component.scale({ width: w - dx, height: h });
+        this.setProperties({ width: w - dx, height: h });
         break;
       case HandlePosition.MIDDLE_RIGHT:
-        this.component.scale({ width: w + dx, height: h });
+        this.setProperties({ width: w + dx, height: h });
         break;
       case HandlePosition.BOTTOM_LEFT:
         this.component.move({ dx, dy: 0 });
-        this.component.scale({ width: w - dx, height: h + dy });
+        this.setProperties({ width: w - dx, height: h + dy });
         break;
       case HandlePosition.BOTTOM_MIDDLE:
-        this.component.scale({ width: w, height: h + dy });
+        this.setProperties({ width: w, height: h + dy });
         break;
       case HandlePosition.BOTTOM_RIGHT:
-        this.component.scale({ width: w + dx, height: h + dy });
+        this.setProperties({ width: w + dx, height: h + dy });
         break;
     }
 
+    this.updateHandlePositions();
+  }
+
+  // IComponent 인터페이스 구현을 명시적으로 포함
+  public move({ dx, dy }: { dx: number; dy: number }): void {
+    super.move({ dx, dy });
+    this.updateHandlePositions();
+  }
+
+  public scale({ sx, sy }: { sx: number; sy: number }): void {
+    super.scale({ sx, sy });
+    this.updateHandlePositions();
+  }
+
+  public setProperties(properties: Partial<any>): void {
+    super.setProperties(properties);
     this.updateHandlePositions();
   }
 }
@@ -122,20 +115,6 @@ export class Handle {
   public contains(mouseX: number, mouseY: number): boolean {
     const halfSize = this.size / 2;
     return mouseX >= this.x - halfSize && mouseX <= this.x + halfSize && mouseY >= this.y - halfSize && mouseY <= this.y + halfSize;
-  }
-
-  public toDrawable(): DrawableShape[] {
-    return [
-      {
-        type: "rectangle",
-        x: this.x - this.size / 2,
-        y: this.y - this.size / 2,
-        width: this.size,
-        height: this.size,
-        fillStyle: "#FFFFFF", // Handle color
-        strokeStyle: "#000000", // Handle border color
-      },
-    ];
   }
 }
 

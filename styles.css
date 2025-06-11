@@ -1,0 +1,116 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #f5f5f5;
+  height: 100vh;
+}
+
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.editor-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.canvas-container {
+  flex: 1;
+  background-color: #fff;
+  position: relative;
+}
+
+#editor-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* 속성 패널 스타일 */
+.properties-panel {
+  width: 200px;
+  background: #f5f5f5;
+  border-left: 1px solid #ddd;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.property-row {
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.property-row label {
+  flex: 1;
+  margin-right: 8px;
+}
+
+.property-input {
+  width: 70px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.property-section {
+  margin-bottom: 16px;
+}
+
+/* 툴바 스타일 */
+.toolbar {
+  display: flex;
+  background-color: #f0f0f0;
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  gap: 8px;
+}
+
+.tool-group {
+  display: flex;
+  gap: 4px;
+  border-right: 1px solid #ddd;
+  padding-right: 8px;
+  margin-right: 8px;
+}
+
+.tool-group:last-child {
+  border-right: none;
+}
+
+.tool-button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.tool-button:hover {
+  background-color: #e9e9e9;
+}
+
+.tool-button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #0069d9;
+}
+
+.icon {
+  font-size: 18px;
+}
