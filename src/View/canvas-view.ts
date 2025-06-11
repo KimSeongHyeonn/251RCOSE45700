@@ -28,6 +28,9 @@ export class CanvasView implements Subscriber<null> {
     // 마우스 이벤트 설정
     this.setupMouseEvents();
 
+    // 키보드 이벤트 설정
+    this.setupKeyboardEvents();
+
     // EditorState 구독
     this.editorState.subscribe(this);
   }
@@ -75,6 +78,94 @@ export class CanvasView implements Subscriber<null> {
     const y = e.clientY - rect.top;
 
     this.editorState.handleMouseUp(x, y);
+  }
+
+  private setupKeyboardEvents(): void {
+    window.addEventListener("keydown", this.handleKeyDown.bind(this));
+  }
+
+  private handleKeyDown(e: KeyboardEvent): void {
+    // 입력 필드에서 키 이벤트가 발생한 경우는 무시
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      return;
+    }
+
+    const isCtrlPressed = e.ctrlKey;
+    const isShiftPressed = e.shiftKey;
+
+    switch (e.key) {
+      case "Delete":
+        e.preventDefault();
+        this.editorState.deleteSelected();
+        break;
+
+      case "z":
+        e.preventDefault();
+        if (isCtrlPressed) {
+          this.editorState.undo();
+        }
+        break;
+
+      case "y":
+        e.preventDefault();
+        if (isCtrlPressed) {
+          this.editorState.redo();
+        }
+        break;
+
+      case "g":
+        e.preventDefault();
+        if (isCtrlPressed) {
+          if (!isShiftPressed) {
+            this.editorState.groupSelected();
+          } else {
+            this.editorState.ungroupSelected();
+          }
+        }
+        break;
+
+      case "ArrowLeft":
+        e.preventDefault();
+        // 왼쪽 화살표: 선택한 요소 왼쪽으로 이동
+        if (e.ctrlKey) {
+          // Ctrl+화살표: 1px 이동
+          this.editorState.moveSelected(-1, 0);
+        } else {
+          // 일반 화살표: 10px 이동
+          this.editorState.moveSelected(-10, 0);
+        }
+        break;
+
+      case "ArrowRight":
+        e.preventDefault();
+        // 오른쪽 화살표: 선택한 요소 오른쪽으로 이동
+        if (e.ctrlKey) {
+          this.editorState.moveSelected(1, 0);
+        } else {
+          this.editorState.moveSelected(10, 0);
+        }
+        break;
+
+      case "ArrowUp":
+        e.preventDefault();
+        // 위쪽 화살표: 선택한 요소 위로 이동
+        if (e.ctrlKey) {
+          this.editorState.moveSelected(0, -1);
+        } else {
+          this.editorState.moveSelected(0, -10);
+        }
+        break;
+
+      case "ArrowDown":
+        e.preventDefault();
+        // 아래쪽 화살표: 선택한 요소 아래로 이동
+        if (e.ctrlKey) {
+          this.editorState.moveSelected(0, 1);
+        } else {
+          this.editorState.moveSelected(0, 10);
+        }
+        break;
+    }
   }
 
   private render(): void {
